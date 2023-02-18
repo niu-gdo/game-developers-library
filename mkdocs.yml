@@ -1,3 +1,13 @@
 site_name: Game Developer's Library
 theme:
   name: material
+
+nav:
+  - Home: 'index.md'
+  - Guides:
+    - 'Guide Index': 'guides/guides-index.md'
+    - 'Unity Guides':
+      - 'Additive Scene Loading': 'guides/unity-guides/additiveloading.md'
+  - Contribution:
+    - 'Using MkDocs': 'contribution/mkdocs-usage.md'
+    - 'Making New Pages': 'contribution/making-new-pages.md'
