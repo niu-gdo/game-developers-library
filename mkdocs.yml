@@ -7,6 +7,10 @@ nav:
   - Guides:
     - 'Guide Index': 'guides/guides-index.md'
     - 'Unity Guides':
+      - 'First Step Series':
+        - 'Introduction': 'guides/unity-guides/first-step-series/unity-first-step-index.md'
+        - 'Install Unity': 'guides/unity-guides/first-step-series/unity-first-step-install.md'
+        - 'Create a New Project': 'guides/unity-guides/first-step-series/unity-first-step-new-proj.md'
       - 'Additive Scene Loading': 'guides/unity-guides/additiveloading.md'
   - Contribution:
     - 'Using MkDocs': 'contribution/mkdocs-usage.md'
