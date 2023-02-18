@@ -1,3 +1,5 @@
+# Home
+
 # Welcome to the NIU Game Developer's Library!
 
 The Game Developer's Library (GDL) is an open source repository of articles which serve to educate readers on independent game development. Anything related to game development, be it engine-specific guides, general development strategies, or even lower level concepts in computer graphics can be found here.
