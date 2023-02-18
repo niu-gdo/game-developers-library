@@ -51,6 +51,11 @@ When you are done (or at any point along the process), use `git add .` and `git 
 
 When your final commit is done and you feel ready to push the branch, execute `git push <branch-name>`. This should create a branch on [our GitHub Repo](https://github.com/niu-gdo/game-developers-library).
 
+If you get an error regarding no upstream branch, do the following:
+```
+git remote add origin https://github.com/niu-gdo/game-developers-library.git
+git push -u origin <branch-name>
+```
 ### Create a Pull Request
 Visit the GitHub Repo on a web browser and go to *Pull Requests -> Create Pull Request*. Select *main* as the base, and your new branch as the compare. `base: main <- compare: <branch-name>`, then create the pull request.
 
