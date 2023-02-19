@@ -9,5 +9,5 @@ Articles can be engine / library / tool specific, or they can be general knowled
 * [Basic Trigonometry for Game Developers]()
 
 ## Unity
-* [Unity's Project Type Capabilities](./unity/unity-type-capabilities.md)
-* [Scriptable Render Pipelines (SRP)](./unity/unity-render-pipelines.md)
+* [Unity's Project Type Capabilities](./unity-articles/unity-type-capabilities.md)
+* [Scriptable Render Pipelines (SRP)](./unity-articles/unity-render-pipelines.md)
