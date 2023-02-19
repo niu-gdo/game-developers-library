@@ -1,4 +1,4 @@
-# Guides (WIP)
+# Guides
 
 Guides are long-form, detailed write ups on how readers can go about implementing some kind of strategy within their projects.
 
