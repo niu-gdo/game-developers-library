@@ -40,7 +40,7 @@ The editor's layout can be re-organized in practically any way you desire. To do
 Frankly, just try dragging a window all over the editor to see what options are available.
 
 #### Save Layouts
-If you change your layout from the default, it may reset back to the default the next time you open the editor. Therefore, you should **save your current layout** using the drop down in the top left.
+If you change your layout from the default, it may reset back to the default the next time you open the editor. Therefore, you should **save your current layout** using the drop down in the top right.
 
 Keep in mind, you can save multiple layouts for different workflows- have a workflow completely dedicated to animation or compositing.
 
