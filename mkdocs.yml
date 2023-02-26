@@ -11,6 +11,7 @@ nav:
         - 'Introduction': 'guides/unity-guides/first-step-series/unity-first-step-index.md'
         - 'Install Unity': 'guides/unity-guides/first-step-series/unity-first-step-install.md'
         - 'Create a New Project': 'guides/unity-guides/first-step-series/unity-first-step-new-proj.md'
+        - 'Rocket Runner Part 1': 'guides/unity-guides/first-step-series/unity-runner-1.md'
   - Articles:
     - 'Article Index': 'articles/articles-index.md'
     - 'Unity Articles':

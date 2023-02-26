@@ -5,8 +5,8 @@ Articles are pages which educate readers on some topic related to game developme
 Articles can be engine / library / tool specific, or they can be general knowledge.
 
 ## Mathematics
-* [Basic Linear Algebra for Game Developers]()
-* [Basic Trigonometry for Game Developers]()
+* [Basic Linear Algebra for Game Developers (Coming Soon!)]()
+* [Basic Trigonometry for Game Developers (Coming Soon!)]()
 
 ## Unity
 * [Unity's Project Type Capabilities](./unity-articles/unity-type-capabilities.md)

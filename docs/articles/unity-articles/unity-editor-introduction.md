@@ -6,7 +6,7 @@ This article will familiarize new Unity users with some important features of th
 
 The article is pretty much a written version of my YouTube video linked below, it is recommended to watch that to learn the editor, and use this article as a reference later.
 
-!!! YOUTUBE VIDEO !!!
+<iframe width="560" height="315" src="https://www.youtube.com/embed/TnI1a0hayEY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## Overview
 Upon opening Unity, you will be presented with the default layout of Unity's most important windows. Here is a brief breakdown of each window's function:
@@ -28,7 +28,6 @@ Upon opening Unity, you will be presented with the default layout of Unity's mos
 * **Hierarchy**
     * This very important window shows you all of the GameObjects within the currently active scene, as well as presenting them in a hierarchical manner if any GameObjects are nested within each other (they won't be for a fresh project).
     * From this window, GameObjects can be inspected, renamed, re-parented, and more.
-    * Learn more about the very important topic of [Scene Hierarchies]()
 
 * **Inspector**
     * This window is your best friend. Any currently selected GameObject or file in the Project window will show up in the Inspector. From there, you will have the ability to edit all kinds of properties of the item, as well as the properties of components for GameObjects.
