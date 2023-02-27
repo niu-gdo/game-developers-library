@@ -4,6 +4,9 @@ Articles are pages which educate readers on some topic related to game developme
 
 Articles can be engine / library / tool specific, or they can be general knowledge.
 
+## General Game Development
+* [Frame Updates and Frame Rate Dependency (Coming Soon)]()
+
 ## Mathematics
 * [Basic Linear Algebra for Game Developers (Coming Soon!)]()
 * [Basic Trigonometry for Game Developers (Coming Soon!)]()
