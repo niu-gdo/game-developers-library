@@ -168,11 +168,14 @@ Here is what my collider looks like. Notice it extends a bit lower so we can get
 
 #### Rigidbody Configuration
 
-Returning back to the Rigidbody component, our player now has physics. In fact, if you were to raise it a bit higher up and enter play mode, you would see it fall to the ground. As I mentioned before, we do not want things like gravity and drag affecting our player's movement- we want to handle positioning purely through scripts we are going to make.
+Returning back to the Rigidbody component, our player now has physics. In fact, if you were to raise it a bit higher up and enter play mode, you would see it fall to the ground. 
 
-Fortunately, Rigidbodies have a setting specifically for this: **Set the *Is Kinematic* property on the Rigidbody component to true**.
+We need to make a few changes to prevent the physics system from making unwanted displacements on our *Player*:
 
-Furthermore, change the Collision Detection mode from `Discrete` to `Continuous Speculative`. This will give us a more accurate (but slightly more expensive) collision detection solution so that we do not wind up clipping through obstacles at high speeds.
+1. Change the `Mass` to some large number, like `999999`. This will allow our *Player* to push dynamic physics objects out of its way if necessary.
+2. Disable `Use Gravity`. We do not desire any downwards velocity right now.
+3. Change the `Collision Detection` mode from `Discrete` to `Continuous Speculative`. This gives our rigidbody a more reliable high-speed collision detection solution at a minor increase to computation. It should eliminate the possibility of tunneling through obstacles at high speed.
+4. Fold out the `Constraints` property and freeze the Y position and all rotation axes. Again, our game does not make use of the vertical Y-Axis for now, so we will just lock that position. We also don't want our *Player* to start spinning from any applied forces.
 
 ### 2) Moving Forwards
 It is not too difficult to get our player moving constantly forward, but we will need to use a script to drive this motion!
@@ -389,11 +392,251 @@ In the Inspector, you should now be able to modify the `_forwardSpeed` and `_str
 
 Since we did the groundwork of multiplying it against a unit-per-second speed, the resultant speed will be in X-meters-per-second. We **ALSO** know that a single segment of our road is 100 meters long, so each road segment will provide 100/X seconds of gameplay. Knowing how long it takes for a player to traverse your levels is useful to keep in mind when designing your game's content. Pretty neat!
 
-## Chapter 3: Points & Missiles
+## Chapter 3: Points
 In our game, the player will need to collect points which, in turn, will give them missiles. In order to destroy *Kill Walls* which occasionally show up with increasing levels of hitpoints, they will need to have collected enough points or else they will run into the wall and lose.
 
-So, in this chapter we will create some pickups which will spawn missiles for the player to hang onto for the next chapters!
+So, in this chapter we will create some pickups which will eventually spawn missiles for the player to hang onto for the next chapters!
 
 1. Create *Point Pickup* Objects
 2. PointPickUp.cs Script
-3. PlayerMissiles.cs Script
+3. Spruce Up the Pick Ups
+
+### 1) Create Point Pickup Objects
+This will be a pretty simple GameObject, we will use a sphere to represent the PickUp, and a large trigger collider to describe how close the *Player* must be to collect it.
+
+In your Hierarchy, create a new empty GameObject and name it *Point PickUp*. Then, create a Sphere object as a child of it.
+
+On that Sphere child, remove it's Sphere Collider, we will be making one on the parent object.
+
+On the *Point PickUp* GameObject, `Add Component > Sphere Collider`. This Sphere Collider will be the volume the *Player* must enter in order to collect the PickUp.
+
+On the collider, enable the `Is Trigger` property. This will stop the collider from registering collections on rigidbodies, but still allow it to *detect collisions* that we can hook into from our scripts.
+
+We will also make this trigger larger than the Pick Up's visual representation so that the player doesn't need to precisely collide with it. I changed the radius to `3.5`.
+
+![Pick Up GameObject](./res/3-1-1-pick-up-object.PNG)
+
+Position the pick up somewhere along and above your road- I put mine at a height of `Y = 2`. Also, make a material for this pick up to give it some color! I chose to make mine yellow with a tiny bit of metallic `Metallic Map = 0.37`.
+
+### 2) PointPickUp.cs Script
+This is going to sound strange, but before we work on this script, we need to at least create the `PlayerMissiles.cs` script and put it on our *Player*, it will make sense in a moment.
+
+Just like before, create a new script called `PlayerMissiles.cs`, as well as `PointPickUp.cs`. On the *Player* GameObject, `Add Component > PlayerMissiles`. We will code this script later.
+
+#### Scripting
+On the *Point PickUp* GameObject, `Add Component > PointPickUp` and open it for editting.
+
+This script will be set up to watch for any GameObject with **specifically a PlayerMissile** component to enter its trigger boundary. When that occurs, the PickUp will tell said PlayerMissile script to increment its points by one, then the PickUp should disappear.
+
+```cs title="PointPickUp.cs" linenums="1"
+using UnityEngine;
+
+public class PointPickUp : MonoBehaviour
+{
+    [SerializeField] private int _pointValue = 1;
+
+    private void CollectPoint(PlayerMissiles playerMissiles)
+    {
+        Debug.Log("I have been collected!");
+        // TODO: Add a point to playerMissiles.
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        // Try to find PlayerMissiles Component on entering GO.
+        PlayerMissiles playerCheck = other.GetComponent<PlayerMissiles>();
+
+        // If component was found...
+        if (playerCheck != null)
+        {
+            CollectPoint(playerCheck);  // Collect the point.
+        }
+    }
+}
+```
+
+The `OnTriggerEnter` method is called during the `FixedUpdate` call when something enters the trigger collider *on the same GameObject* as the script. The `Collider other` is a reference to the collider component which invoked the collision.
+
+From the collider, we can query its GameObject for other components by using `GetComponent<type>`, so we check to see if the incoming object has a `PlayerMissiles` component, and run a routine for collecting the point if it does.
+
+It is very important that we verify the incoming collision *does actually contain* a `PlayerMissiles` component. `GetComponent` can return `NULL` if no component of the specified type is found on `other`, which would then trigger a `NullReferenceException` if we tried to invoke methods on it! Remember that *any* GameObject with a collider on it could invoke the `OnTriggerEnter` method by simply moving into its bounds- we want to filter to only those with `PlayerMissiles` scripts (one, in our case- the Player!).
+
+Since our `PlayerMissiles` script does not yet have a method for receiving points, we will write ourselves a note to implement that later.
+
+#### Prefabs
+We are going to want to have multiple copies of these pick-ups, but we want them to all generally operate the same way with similar parameters. This makes them a good candidate to turn into a **prefab**.
+
+Prefabs are GameObjects which are saved somewhere in your Assets folder. Copies of the prefab can be instantiated into the scene which will inherit all of the properties and structure of the prefab. Additionally, if you make any changes to a prefab, **all of the instances of that prefab in any scene are updated to match**. This obviously makes them very powerful for reuse.
+
+In your Project window, `Create > Folder`, name the folder *Prefabs*, and open it. Then, drag-and-drop the *Point PickUp* GameObject from the hierarchy into the empty space in the *Prefabs* folder. You should then see the new Prefab appear in the Project window and the *Point PickUp* GameObject in the Hierarchy should turn blue to indicate it is an **instance of a prefab**.
+
+![Prefab creation](./res/3-1-2-create-prefab.gif)
+
+Now, try creating some new instances by drag-and-dropping from the Project window or `Ctrl+D` on the existing instance, and arrange the pick ups in a line.
+
+***IMPORTANT***: When you want to make a change to a prefab that effects **all** instances, you should double-click it in the Project window to open the prefab editor. This will properly propagate all changes to any instances.
+
+### 3) Spruce Up the Pick Ups
+Now normally, it is not a great idea to invest a bunch of time polishing individual game elements when you are still prototyping. We could, for instance, decide later that we do not actually want to have these pick ups, and then all that effort would go down the drain. Or worse: we could become too attached to something because we have spent too much time refining it and be resistant to changing it out for something better.
+
+However, it doesn't hurt to add a bit of refinement to something you know you want to keep, and I personally find it to be a good break from prototyping that keeps me invested in the project.
+
+#### Move To Player Effect
+
+Instead of the PickUp objects simply disappearing from thin air when we collect them, we will have them fly into the player and be collected when they reach them.
+
+```cs title="PointPickUp.cs" linenums="1" hl_lines="4 5 7 9 11-28 34 45"
+public class PointPickUp : MonoBehaviour
+{
+    [SerializeField] private int _pointValue = 1;
+    [SerializeField] private float _flyAcceleration = 32f;
+    [SerializeField] private float _flyCollectionDistance = 0.5f;
+
+    private float _flySpeed = 0f;
+
+    private PlayerMissiles _targetPlayerMissiles;
+
+    private void Update()
+    {
+        if (_targetPlayerMissiles != null)
+        {
+            _flySpeed += _flyAcceleration * Time.deltaTime;
+            
+            transform.position = Vector3.MoveTowards(
+                transform.position,
+                _targetPlayerMissiles.transform.position,
+                _flySpeed * Time.deltaTime
+            );
+
+            if (Vector3.Distance(transform.position, _targetPlayerMissiles.transform.position) <= _flyCollectionDistance)
+            {
+                CollectPoint();
+            }
+        }
+    }
+
+    private void CollectPoint()
+    {
+        Debug.Log("I have been collected!");
+        // TODO: Add a point to playerMissiles.
+        Destroy(gameObject);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        // Try to find PlayerMissiles Component on entering GO.
+        PlayerMissiles playerCheck = other.GetComponent<PlayerMissiles>();
+
+        // If component was found...
+        if (playerCheck != null)
+        {
+            _targetPlayerMissiles = playerCheck;
+        }
+    }
+}
+```
+
+When the `PlayerMissiles` component is detected, we keep track of it in a class member. Whenever that class member `_targetPlayerMissiles` is not null, we will move the position of the pick up closer to the player's position by an accelerating velocity per frame. Lastly, when the distances are lower than some set distance, we then trigger the collection.
+
+Note that we multiply the acceleration and the velocity by `Time.deltaTime`. This number is equal to the number of seconds between the last frame and this frame, which has the effect of converting the accleration / velocity to a per-second quantity instead of a per-frame quantity.
+
+Note that increasing the velocity each frame gives our pick up some more character by introducing a *ramp up* to the collection. It also guarantees that the pick up will eventually catch up to the *Player* even if they are initially faster.
+
+Go in Play Mode and give it a try! You can tweak the `_flyAcceleration` to get some different results. You may want to push back or increase the FOV on your camera to be able to observe the movement better.
+
+#### Slow Turn Effect
+
+Right now, the pick up always moves in a straight line from its position to the *Player*. We can add even more character to the flight by making the velocity direction slowly correct itself over time, which will give the movement a more circular arc than a J-shaped one.
+
+To do this, we will first determine the initial direction that the pick up must travel to get to the *Player*. Since our *Player* is traveling forward at a considerable speed, that initial direction will become incorrect pretty quickly, and the pick up will likely miss the player.
+
+As time goes along, we will gradually correct the velocity direction towards the actual direction from the pick up to the *Player*, which will cause it to smoothly hook around and eventually reach the player.
+
+![Slow Turn Diagram](./res/3-2-3-slow-velocity-change.PNG)
+
+```cs title="PointPickUp.cs" linenums="1" hl_lines="8 10 22 25 26 29-32 35 38 61"
+using UnityEngine;
+
+public class PointPickUp : MonoBehaviour
+{
+    [SerializeField] private int _pointValue = 1;
+    [SerializeField] private float _flyAcceleration = 32f;
+    [SerializeField] private float _flyCollectionDistance = 0.5f;
+    [SerializeField] private float _flyDirectionCorrection = 2f;
+
+    private Vector3 _velocityDirection = Vector2.zero;
+    private float _flySpeed = 0f;
+
+    private PlayerMissiles _targetPlayerMissiles;
+
+    private void Update()
+    {
+        if (_targetPlayerMissiles != null)
+        {
+            // Accelerate the speed
+            _flySpeed += _flyAcceleration * Time.deltaTime;
+
+            Vector3 targetPosition = _targetPlayerMissiles.transform.position;
+
+            // Incrementally correct the current velocity towards the correct one
+            Vector3 correctDirection = Vector3.Normalize(targetPosition - transform.position);
+            _velocityDirection = Vector3.MoveTowards(_velocityDirection, correctDirection, _flyDirectionCorrection * Time.deltaTime);
+
+            // If the position is negative, flip the y velocity positive to keep it positive.
+            if (transform.position.y <= 0f)
+            {
+                _velocityDirection.y = Mathf.Abs(_velocityDirection.y);
+            }
+
+            // Move the transform along the velocity direction at _flySpeed speed.
+            transform.Translate(_velocityDirection * _flySpeed * Time.deltaTime);
+
+            // Check the distance, collect if close enough.
+            if (Vector3.Distance(transform.position, targetPosition) <= _flyCollectionDistance)
+            {
+                CollectPoint();
+            }
+        }
+    }
+
+    private void CollectPoint()
+    {
+        Debug.Log("I have been collected!");
+        // TODO: Add a point to playerMissiles.
+        Destroy(gameObject);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        // Try to find PlayerMissiles Component on entering GO.
+        PlayerMissiles playerCheck = other.GetComponent<PlayerMissiles>();
+
+        // If component was found...
+        if (playerCheck != null)
+        {
+            _targetPlayerMissiles = playerCheck;
+            _velocityDirection = Vector3.Normalize(playerCheck.transform.position - transform.position);
+        }
+    }
+}
+```
+
+If you subtract a vector `position` from the vector `target`, the result will be a vector which would move `position` to `target`. If you then *normalize* that vector, you will get the **direction** from `position` to `target`. Commit this to memory, it is a very important technique!
+
+When the trigger initially occurs, we will store the initial direction in `_velocityDirection`.
+
+Then, per-update, we will slowly move that initial direction towards the correct direction needed to intercept the *Player* as it moves along. All the while, we move the pick up along the ever-correcting direction vector by the accelerating speed.
+
+Additionally, since our player's position is at y=0 and our points are above the ground, our pick-up may try to go below the ground. If it does, we will fix this issue by simply making the y component of our `_velocityDirection` positive. This also gives us an interesting *bounce* effect.
+
+Do not worry if this is a bit advanced for you right now. As long as the you get the general idea, you will learn how to manipulate vectors with practice.
+
+As you will come to find out, the effort required to make something look *good* is often a bigger ordeal than just making the thing in the first place! This is why it is a good idea to typically save refinement for later stages so your effort is not wasted!
+
+## Chapter 4: Missiles
+If you go back to the [short preview shown in this series' introduction](unity-first-step-index.md#rocket-runner), you can see that when the player collects the pick ups, small missiles appear spinning around them.
+
+To accomplish this we will create a new script which will handle collecting points, spawning missiles, and positioning them around the player. We will also need to create those missile prefab objects, which will contain a basic script that will be evolved in the next chapter.
+
+1. Missile Prefab
+2. Point Collection Response
