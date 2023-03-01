@@ -194,8 +194,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector3 newPosition = transform.position;   // Get the current position...
+        Vector3 newPosition = _rigidbody.position;   // Get the current position...
         newPosition += Vector3.forward;             // Add (0, 0, 1) to the newPosition in order to move it forward.
+
         _rigidbody.MovePosition(newPosition);
     }
 }
@@ -203,13 +204,12 @@ public class PlayerMovement : MonoBehaviour
 
 This script is pretty simple. In the Awake method (called when the object is first loaded in, but before any update calls), we get a reference to the rigidbody component attached to the same GameObject as the script- the one for our player.
 
-In the FixedUpdate call, which is called whenever there is a physics timestep, we get the current position of the player, increment it in the forward direction, and then tell the rigidbody to move itself to that incremented position. This gives us forward motion!
 
-**Did you notice the `RequireComponent` attribute** above the class definition? When you specifies required components on a MonoBehavior class, it tells Unity that your script should **always** be paired with a component of that type when attached to a GameObject. This prevents our call on line 10 from ever returning null and crashing our script.
+In the FixedUpdate call, which occurs whenever a physics update occurs, we will take our current position, increment it by one in the z-axis, and move our rigidbody to the incremented position. Note that for the most part, any logic which involves calls or accesses to rigidbody components should always occur within the FixedUpdate call so that it can properly interact with other physics objects!
+
+**Did you notice the `RequireComponent` attribute** above the class definition? When you specify required components on a MonoBehavior class, it tells Unity that your script should **always** be paired with a component of that type when attached to a GameObject. This prevents our call on line 10 from ever returning null and crashing our script.
 
 Save the script. Back in the editor, select the *Player* and `Add Component > PlayerMovement`, then enter Play Mode, you will notice your player zoom off!
-
-Or, maybe it *isn't* zooming off, depending on your hardware. We'll fix that in section 4!
 
 ### 3) Bring the Camera With!
 Obviously, we want to have our camera keep place with the player!
@@ -292,3 +292,108 @@ Recommended Reading: [Game Dev Beginner's "Input In Unity Made Easy"](https://ga
 If you created the Input Action asset via the Player Input component as we did, the component's `Actions` parameter should already be populated. If not, select the one we just made now.
 
 ### 5) Strafing
+Now that we prepped our user input, we can upgrade our `PlayerMovement` script to allow the player to move left and right.
+
+#### Strafe Movement
+
+Simply enough, when we are in the process of calculating the next position of our player on any given frame, we should also add an offset on the X axis.
+
+```cs title="PlayerMovement.cs" linenums="1" hl_lines="2 17 18 19 21 24 25 26 27"
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class PlayerMovement : MonoBehaviour
+{
+    private Rigidbody _rigidbody;
+
+    private float _strafeInput = 0f;
+
+    private void Awake()
+    {
+        _rigidbody = GetComponent<Rigidbody>();
+    }
+
+    private void FixedUpdate()
+    {
+        Vector3 positionOffset = Vector3.zero;
+        positionOffset += Vector3.forward;             // Add (0, 0, 1) to the newPosition in order to move it forward.
+        positionOffset.x += _strafeInput;              // Add player's horizontal input to X. 1 if right, -1 if left.
+
+        _rigidbody.MovePosition(_rigidbody.position + positionOffset);
+    }
+
+    private void OnMove(InputValue inputValue)
+    {
+        _strafeInput = inputValue.Get<Vector2>().x;
+    }
+}
+```
+
+Whenever the *PlayerInput* component on our *Player* GameObject sees receives an event from the player performing an input, it will broadcast a message to any script on its GameObject. By giving our `PlayerMovement` script a method for `void OnMove(InputValue)`, we can tell our script to react to the player updating their movement inputs.
+
+In this circumstance, we just want to read in the value of the player's horizontal input to a stored variable. Note that we need to add `using UnityEngine.InputSystem` for the `InputValue` object.
+
+We also slightly change the way that we calculate the new position. Instead, we compute an *offset* which is then added to the rigidbody's position in the `MovePosition` call. This will be a better-expressed approach for when we add speed control.
+
+`_strafeInput`, then, will be equal to -1 if the player inputs left, 1 if right, and 0 when nothing is held. From there, we add their input to the `newPosition.x` in order to apply some horizontal velocity for each frame!
+
+#### Speed Adjustment
+Let's consider for a second- how *actually* fast is our player moving? Well, all of our logic for moving the player forward is being incremented in the `FixedUpdate` method. As the name suggests, this method is called at very exact, fixed intervals: exactly every 0.02 seconds by default, or 50 times a second. 
+
+This means that our player has a forward speed of 50 units (meters) per second. This is very awkward, since it is way too fast and we would have to use small multipliers to slow it down.
+
+To account for this, we should multiply our per-update offset to be one-unit per second, which we can do by just multiplying the whole thing by that fixed update interval, which Unity happens to keep in a variable at `Time.fixedDeltaTime`.
+
+```cs title="PlayerMovement.cs (frag)" linenums="15" hl_lines="7"
+private void FixedUpdate()
+    {
+        Vector3 positionOffset = Vector3.zero;
+        positionOffset += Vector3.forward;             // Add (0, 0, 1) to the newPosition in order to move it forward.
+        positionOffset.x += _strafeInput;              // Add player's horizontal input to X. 1 if right, -1 if left.
+
+        positionOffset *= Time.fixedDeltaTime;
+
+        _rigidbody.MovePosition(_rigidbody.position + positionOffset);
+    }
+```
+
+After making this change, you will notice that your player now moves at exactly one meter per second forward- very slow, but it gives us a good platform to multiply by integers and get a predictable speed.
+
+#### Variable Speed
+By using some `[SerializeField]`-tagged fields, we can apply some multipliers to the forward and horizontal contributions to our `positionOffsets` and produce different speeds.
+
+```cs title="PlayerMovement.cs (frag)" hl_lines="4 5 13 14"
+...
+public class PlayerMovement : MonoBehaviour
+{
+    [SerializeField] private float _forwardSpeed = 16f;
+    [SerializeField] private float _strafeSpeed = 10f;
+
+    private Rigidbody _rigidbody;
+...
+
+    private void FixedUpdate()
+    {
+        Vector3 positionOffset = Vector3.zero;
+        positionOffset += Vector3.forward * _forwardSpeed;             // Add (0, 0, 1) to the newPosition in order to move it forward.
+        positionOffset.x += _strafeInput * _strafeSpeed;              // Add player's horizontal input to X. 1 if right, -1 if left.
+
+        //positionOffset *= Time.fixedDeltaTime;
+
+        _rigidbody.MovePosition(_rigidbody.position + positionOffset);
+    }
+...
+```
+
+In the Inspector, you should now be able to modify the `_forwardSpeed` and `_strafeSpeed` to get different respective speeds!
+
+Since we did the groundwork of multiplying it against a unit-per-second speed, the resultant speed will be in X-meters-per-second. We **ALSO** know that a single segment of our road is 100 meters long, so each road segment will provide 100/X seconds of gameplay. Knowing how long it takes for a player to traverse your levels is useful to keep in mind when designing your game's content. Pretty neat!
+
+## Chapter 3: Points & Missiles
+In our game, the player will need to collect points which, in turn, will give them missiles. In order to destroy *Kill Walls* which occasionally show up with increasing levels of hitpoints, they will need to have collected enough points or else they will run into the wall and lose.
+
+So, in this chapter we will create some pickups which will spawn missiles for the player to hang onto for the next chapters!
+
+1. Create *Point Pickup* Objects
+2. PointPickUp.cs Script
+3. PlayerMissiles.cs Script
