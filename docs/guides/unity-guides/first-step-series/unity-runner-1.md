@@ -640,3 +640,247 @@ To accomplish this we will create a new script which will handle collecting poin
 
 1. Missile Prefab
 2. Point Collection Response
+3. Missile List
+4. Easy Visual Improvements
+
+### 1) Missile Prefab
+
+In order to instantiate a GameObject at runtime from a script, we (generally) need to save that object ahead of time as a prefab. So let's go ahead and make our missile objects now.
+
+Create an empty GameObject called *Missile*, and attach the Octohedron model to it as a child just like we did for the *Player* (though we do not necessarily need to make a *... GFX* object this time). Create a new material to color it.
+
+For now, we will also create a `Missile.cs` script that will be attached to our *Missile* object, though it will not do anything currently. We will need the class to exist since our script which we will use to manage the player's missiles will need to maintain a list of `Missile` objects.
+
+Create a new `Missile.cs` script, and add it to the *Missile* object as we have done before. Then, save the missile in your *Prefabs* folder! You can then delete the *missile* object from the Hierarchy.
+
+![Missile prefab screenshot](./res/4-1-1-missile-prefab.PNG)
+
+### 2) Point Collection Response (PlayerMissiles.cs)
+
+Whenever we want to construct some kind of behavior which manages a collection of objects for some specified task, it is almost always a good idea to create a script which decouples the behavior of managing the group from managing the individuals. In this scenario, we need a script to operate individual missiles (`Missiles.cs`), and then a script to handle collecting, spawning, and choosing which missiles to fire- essentially a manager.
+
+We will modify our placeholder `PlayerMissiles` script for this purpose. It will be a component of the *Player* GameObject and will be responsible for handling the tasks mentioned above. The first thing we need it to do is let our pick up objects send a message to the script when they are collected.
+
+```cs title="PlayerMissiles.cs" linenums="1"
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerMissiles : MonoBehaviour
+{
+    private int _missilePoints = 0;
+
+    public void AddPoint(int points)
+    {
+        _missilePoints += Mathf.Max(0, points);
+        Debug.Log(_missilePoints);
+    }
+}
+```
+```cs title="PointPickUp.cs (frag)" linenums="45" hl_lines="3"
+    private void CollectPoint()
+    {
+        _targetPlayerMissiles.AddPoint(_pointValue);
+        Destroy(gameObject);
+    }
+```
+
+Since our pick up script already stores a reference to the `PlayerMissiles` class it is chasing, adding points to the class is as easy as providing a public method for it to do so. We also use `Mathf.Max` to ensure the points added is at least 0.
+
+I have not mentioned this yet, but we allowed each pick up to have it's point total be a property changeable in the Inspector. This allows us to make pick ups which are worth more points. Lets go ahead and make a pick up which is worth **three** points.
+
+Select one of your pick ups in your scene, `Ctrl+D` to duplicate it, move it, and change its `Point Value` property to `3`. Also create and apply a new material to color it differently.
+
+Now, drag it down to your Prefabs folder again and you will get a new prompt, asking if you would like to make this an *original prefab* or a *variant*. A variant prefab functions similarly to *class inheritance*, it defines the variant as a **subtype** of a base prefab by providing a few overrides that make it distinct. The variant option makes perfect sense here, so use that!
+
+Optionally, you can also make it a tad bigger and lower it's flight speed / correction to give it a weightier feel as it flies toward the player.
+
+![Picture of new x3 pick up](./res/4-1-2-pick-up-x3.PNG)
+
+### 3) Missile List
+
+The number of points our player has will correspond to how many missiles they currently have ready at any given time. For now, we will just have one point correspond to one missile. This could be a problem in the future if we have hundreds of points (from both a visual and performance stand point), but it will be fine for now.
+
+Our `PlayerMissiles` script will need to create missiles in order to sync up the missile count with their point count. Further, it will need to **keep track** of those existing missile objects so that they can be fired later when we eventually implement the kill walls, which we will do by keeping a list of them.
+
+Before we do some scripting, we also need to designate GameObject in our hierarchy that we want to act as a parent to our spawned missiles, which will also dictate where they appear positionally.
+
+To accomplish this, we shall create a new empty object under the *Player* called *Missile Store*, which we will move half way between the ground and the our *Player GFX* transform.
+
+```cs title="PlayerMissiles.cs" linenums="1"
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerMissiles : MonoBehaviour
+{
+    [SerializeField] private GameObject _missilePrefab;
+    [SerializeField] private Transform _missileStore;
+    [SerializeField] private float _missileSpawnRadius = 3f;
+
+    private List<Missile> _missileList;
+    private int _missilePoints = 0;
+
+    public void AddPoint(int points)
+    {
+        _missilePoints += Mathf.Max(0, points);
+
+        SyncMissilesToPoints();     // Create missiles to catch up with the points
+    }
+
+    private void Awake()
+    {
+        _missileList = new List<Missile>();
+    }
+
+    /// <summary>
+    /// Creates more missiles to make the missile count equal to the number of missile points.
+    /// </summary>
+    private void SyncMissilesToPoints()
+    {
+        int missilesToCreate = _missilePoints - _missileList.Count;     // # of missiles needed to sync
+
+        for (int i = 0; i < missilesToCreate; i++)
+        {
+            CreateMissile();
+        }
+    }
+
+    /// <summary>
+    /// Instantiates a missile, assigns a random offset to prevent stacking, and adds it to the list.
+    /// </summary>
+    private void CreateMissile()
+    {
+        // Creates a new instance of the prefab as a child of _missileStore
+        GameObject missileGO = Instantiate(_missilePrefab, _missileStore);
+        Missile missile = missileGO.GetComponent<Missile>();
+
+        Vector3 randomOffset = new Vector3(
+            Random.Range(-_missileSpawnRadius, _missileSpawnRadius),
+            0f,
+            Random.Range(-_missileSpawnRadius, _missileSpawnRadius)
+        );
+
+        missile.transform.localPosition = randomOffset;
+
+        _missileList.Add(missile);
+    }
+}
+```
+
+This script gets pretty big, but that is because we are also trying to work some better structure here by using functions and some documentation.
+
+First, we create a reference to our missile prefab and the transform we would like to place them under. These will both be populated using the Inspector. We will discuss `_missileSpawnRadius` in a second.
+
+The `_missileList` is a collection of any active missiles we have spawned. Note that even though it is a collection of `Missile` objects, the objects have an implied GameObject attached to them since they are a *MonoBehavior*, and storing them as the `Missile` component keeps us from having to constantly use `GetComponent`.
+
+The `CreateMissile` method uses the `Instantiate` method to create a new instance of our `_missilePrefab` as a child of `_missileStore`. We then also generate a random offset for its local position so that all of the missiles are not spawned right on top of each other (Note that the local position is where it lies relative to its parent, similar to when you change the position of children in the Hierarchy). The `Missile` object of the newly created instance is added to our list.
+
+The `SyncMissilesToPoints` method will determine how many missiles need to make the count in the list one-to-one with the `_missilePoints`. It needs to be called whenever our point count is changed, so we make a call to it in `AddPoints`.
+
+As a nice touch, we also introduce some C# XML documentation- something that is very worthwhile as your project grows and gets larger. You will want to be able to keep notes on what complex functions and scripts do. The XML documentation also adds intellisense information to anything you put it on- hover your mouse over `CreateMissile()` in your editor and you'll see!
+
+[Learn more about C# XML documentation](https://www.oreilly.com/library/view/c-in-a/0596001819/ch04s10.html)
+
+Test your game and you will see new missiles appearing as you collect points, nice!
+
+### 4) Easy Visual Improvements
+While we are at it, we will apply some script-driven animation to our missiles in order to give them a bit more life.
+
+#### Store Rotation
+By rotating our *Missile Store* we can create the effect of our missiles orbiting around the *Player* which looks pretty cool. It is also very simple to implement because of how our Player's hierarchy is organized.
+
+```cs title="PlayerMissiles.cs (frag)" linenums="1"
+...
+
+[SerializeField] private float _storeSpinSpeed = 180f;
+
+...
+
+private void Update()
+{
+    _missileStore.Rotate(new Vector3(0f, _storeSpinSpeed * Time.deltaTime, 0f));
+}
+```
+
+The Y-Axis rotation applied per frame gives us a Z-X plane rotation of the missile store, which gives us our orbiting motion. Multiplying the `_storeSpinSpeed` by `Time.deltaTime` turns it into a degrees-per-second speed instead of a degrees-per-frame speed.
+
+Now, if you tried this in Play Mode, you likely noticed a small issue...
+
+![Bad missile store rotation](./res/4-1-4-bad-missile-rotation.gif)
+
+The rotation of the store also causes our missiles to point in the wrong direction! This is easy to fix, we will just have the missiles also correct their rotation to be forward-facing each frame inside of `Missile.cs`.
+
+```cs title="Missile.cs" linenums="1"
+using UnityEngine;
+
+public class Missile : MonoBehaviour
+{
+    private void Update()
+    {
+        transform.rotation = Quaternion.LookRotation(Vector3.forward, Vector3.up);
+    }
+}
+```
+
+Each frame, set the **global** rotation of the missile to be a rotation which faces down the positive Z axis.
+
+#### Missile Spin
+
+We can also add a little more character by having our missiles spin on the Z-axis passively.
+
+```cs title="Missile.cs" linenums="1" hl_lines="5 7 9-13 19 20"
+using UnityEngine;
+
+public class Missile : MonoBehaviour
+{
+    [SerializeField] private float _spinSpeed = 200f;
+
+    private float _currentSpinAngle = 0f;
+
+    private void Awake()
+    {
+        // Apply a random starting angle 
+        _currentSpinAngle += Random.Range(0f, 359f);
+    }
+
+    private void Update()
+    {
+        transform.rotation = Quaternion.LookRotation(Vector3.forward, Vector3.up);  // Reset rotation
+
+        _currentSpinAngle += _spinSpeed * Time.deltaTime;   // Increment the spin angle by time difference
+        transform.Rotate(0f, 0f, _currentSpinAngle);        // Rotate to spin angle
+    }
+}
+```
+
+Note that the `Transform.Rotate(Vector3)` method typically applies a rotation *additive to* the existing one, but since our assignment on line 17 overrides the previous rotation, the spin needs to be stored in a variable.
+
+We also so `Time.deltaTime` being used in a slightly different way here. If you increment a variable by `Time.deltaTime` each frame, that variable effectly acts as a stopwatch by accumulating the number of real-world seconds.
+
+Lastly, we also apply a random starting angle to the missile so that missiles added in the same frame are generally not in phase with each other, which may looks weirdly artifical.
+
+---
+
+Previously, I mentioned that it is generally best not to work on visual refinement while prototyping, since we may wind up needing to scrap entire features later down the line. However, I frequently break this rule.
+
+I personally find that occasionally making visual refinements keeps me invested in longer projects- having something nice to look at is very appealing and makes you feel like you are getting somewhere, which combats burn-out a bit. It also gives you something neat to show your friends, which very much helps with encouragement (if you have *good* friends that is!).
+
+It is a fine line that you will have to set for yourself, but I generally find easy slam-dunks like what we just implemented to be worth the time every once in a while.
+
+## Chapter 5: Kill Walls
+
+Our primary obstacle, Kill Walls, will be the basis of our game's challenge. Kill Walls will have a specific amount of Hit Points (HP) that need to be defeated using missiles, or else the *Player* will run into them and lose. Each missile collected from a pick up will damage a wall for 1 HP.
+
+When the player approaches a wall, they will automatically fire as many missiles as necessary to destroy the wall. If they cannot, they will collide with it and be destroyed!
+
+1. Kill Wall Prefab
+2. Player Killing Behavior
+3. Missile Launching
+
+
+## Chapter 6: User Interface
+
+## Chapter 7: Hazards
+
+## Conclusion
