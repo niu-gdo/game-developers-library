@@ -878,8 +878,261 @@ When the player approaches a wall, they will automatically fire as many missiles
 2. Player Killing Behavior
 3. Missile Launching
 
+### 1) Kill Wall Prefab
+
+#### Road Extension
+Actually, before we make our first Kill Wall, go ahead and extend your road if you haven't already. Use `Ctrl+D` to duplicate the *Road* group and move it down the Z-Axis such that it is seamless with the original road.
+
+#### Wall
+As usual, we will create an empty GameObject that will house everything related to the Kill Wall- name the new empty GameObject *Kill Wall*.
+
+To the *Kill Wall* object, add a *Cube* 3D Object as a child of it and scale it so that it spans the entire road and is much taller. Giving it some thickness will help with collision detection as well. Go ahead and make a material to color the cube as well- red is nice and menacing!
+
+We actually want the collider of the wall to be on the *Kill Wall* GameObject, not the *Cube*, so delete the *Cube* one and add an appropriately sized `BoxCollider` to the *Kill Wall*. (We do this because colliders will only report collisions to scripts immediately on the same GameObject, not their parents.
+
+Create a new script `KillWall.cs` and add it to the *Kill Wall*, we will implement it later.
+
+#### Shoot Trigger
+
+As mentioned before, the player will automatically fire their missiles any *Kill Wall* it approaches. To accomplish this, we will create a trigger collider some distance in front of any kill wall which will tell the player to shoot at the wall when they enter it.
+
+Create a new empty GameObject as a child of the *Kill Wall* and name it *Shoot Trigger*. Move it to be a fair distance in front of the wall, and `AddComponent > Box Collider`. Change the parameters of the collider to make it also span the entire road so the player cannot miss it.
+
+Create a new script `ShootTrigger.cs` and add it to the *Shoot Trigger*, we will implement it soon.
+
+Turn your *Kill Wall* object into a prefab so we can use it again later!
+
+### 2) Player Killing Behavior
+
+We will add some behavior to allow the *Kill Walls* to destroy the player when they touch them.
+
+In order to do this, we need to describe how the *Player* itself should 'die'. For our basic prototype of this game, we will simply destroy the GameObject that represents them, but we will need to put that code somewhere. Ideally, the *Player* will have a publically-scoped method to trigger a death.
+
+It wouldn't make much sense for our `PlayerMovement` or `PlayerMissiles` script to also handle death behavior, so we will add a new script to the player, `Player.cs`, which will handle general player behavior, such as dying.
+
+```cs title="Player.cs" linenums="1"
+using UnityEngine;
+
+public class Player : MonoBehaviour
+{
+    public void Die()
+    {
+        Destroy(gameObject);
+    }
+}
+```
+
+Then we can have our `KillWall` script detect collisions with anything that contains a `Player` script and trigger the `Die` method if so.
+
+```cs title="KillWall.cs" linenums="1"
+using UnityEngine;
+
+public class KillWall : MonoBehaviour
+{
+
+    [SerializeField] private 
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Player playerCheck = collision.gameObject.GetComponent<Player>();
+        if (playerCheck != null)
+        {
+            playerCheck.Die();
+        }
+    }
+}
+```
+Once again, we make sure that we check that the opposing collider is *actually* a `Player` class by comparing it against `null`, which avoids a possible null reference exception should something else incidentally collide with the wall.
+
+### 3) Missile Launching
+In a similar vein, our `ShootTrigger` script shoud detect a `Player` entering its trigger volume and tell the player to launch as many missiles as necessary to destroy the `KillWall` it is attached to. This will take a bit more work, though!
+
+This is going to require a few changes to four scripts: `KillWall`, `Missile`, `PlayerMissiles`, and `ShootTrigger`.
+
+* `KillWall` will need to be able to be damaged and track its damage.
+* `Missile` will need to be given behavior to chase after a kill wall and damage it when it is close enough
+* `PlayerMissiles` needs a public method to fire *exactly* the right amount of missiles to kill a wall.
+* `ShootTrigger` needs to track which wall it is registered to and trigger the method mentioned above for `PlayerMissiles` when the player enters.
+
+We double-back to our `KillWall.cs` and make a few changes to track HitPoints, take damage, and allow destruction.
+
+
+```cs title="KillWall.cs" linenums="1" hl_lines="5 7-15 17-20 31"
+using UnityEngine;
+
+public class KillWall : MonoBehaviour
+{
+    [SerializeField] private int _hitPoints = 5;
+
+    public void TakeDamage(int damage)
+    {
+        _hitPoints -= damage;
+
+        if (_hitPoints <= 0)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        Destroy(gameObject);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Player playerCheck = collision.gameObject.GetComponent<Player>();
+        if (playerCheck != null)
+        {
+            playerCheck.Die();
+        }
+    }
+
+    public int HitPoints { get => _hitPoints; }
+}
+```
+
+Note at the bottom that we create a *Property* called `HitPoints` which exposes `_hitPoints` to public reading without allowing it to be publically writable.
+
+Next, we will create a method on our `Missile` script which allows it to fire itself at a provided `KillWall` object.
+
+```cs title="Missile.cs" linenums="1"
+using UnityEngine;
+
+public class Missile : MonoBehaviour
+{
+    [SerializeField] private int _attackDamage = 1;
+    [SerializeField] private float _spinSpeed = 200f;
+    [SerializeField] private float _flySpeed = 30f;
+    [SerializeField] private float _detonateDistance = 3f;
+
+
+    private KillWall _killWallTarget;
+    private float _currentSpinAngle = 0f;
+
+    public void FireAtWall(KillWall killWall)
+    {
+        _killWallTarget = killWall;
+        transform.parent = null;    // Unparent so it does not follow the player
+    }
+
+    private void Awake()
+    {
+        _currentSpinAngle += Random.Range(0f, 359f);
+    }
+
+    private void Update()
+    {
+        if (_killWallTarget != null)
+            FlyAtTarget();
+        else
+            DoIdleAnimation();
+    }
+
+    private void FlyAtTarget()
+    {
+        Vector3 targetPosition = _killWallTarget.transform.position;
+
+        // Move towards wall
+        transform.position = Vector3.MoveTowards(transform.position, targetPosition, _flySpeed * Time.deltaTime);
+        
+        transform.LookAt(targetPosition, Vector3.up);   // Look towards the wall we are flying at
+
+        // If close enough, do damage and destroy myself.
+        if (Vector3.Distance(transform.position, targetPosition) <= _detonateDistance)
+        {
+            _killWallTarget.TakeDamage(_attackDamage);
+            Destroy(gameObject);
+        }
+    }
+
+    private void DoIdleAnimation()
+    {
+        transform.rotation = Quaternion.LookRotation(Vector3.forward, Vector3.up);
+
+        _currentSpinAngle += _spinSpeed * Time.deltaTime;
+        transform.Rotate(0f, 0f, _currentSpinAngle);
+    }
+
+    public int AttackDamage { get => _attackDamage; }
+}
+```
+
+Note that we moved the original `Update` behavior to `DoIdleAnimation`, which is sidelined one the missile has a valid target. This actually works pretty similarly to our `PointPickUp`'s chase behavior.
+
+Also note that we unparent the missile from the *Player* when we fire, so its position is not affected by the player's movement any longer.
+
+Next, we need to change the `PlayerMissiles` script to have a public method to dispatch exactly enough missiles to destroy a given `KillWall`:
+
+```cs title="PlayerMissiles.cs" linenums="1"
+
+...
+
+public void FireMissilesAtTarget(KillWall killWall)
+{
+    // Total strength of all fired missiles.
+    int cumulativeDamage = 0;
+
+    // Iterate through all missiles BACKWARDS through the list.
+    // Stop if cumulative damage is high enough to destroy wall or 
+    // we run out of missiles.
+    for (int i = _missileList.Count - 1; i >= 0 && cumulativeDamage < killWall.HitPoints; i--)
+    {
+        Missile nextMissile = _missileList[i];
+
+        nextMissile.FireAtWall(killWall);
+        cumulativeDamage += nextMissile.AttackDamage;
+
+        _missileList.RemoveAt(i);
+        _missilePoints -= nextMissile.AttackDamage;
+    }
+}
+
+...
+
+```
+We iterate through each missile in the `_missileList` from back to front, firing them at the wall until the cumulative damage of the fired missiles is enough to kill the wall or we run out.
+
+We go from back to front because it is generally more performant to unshift items from a container from the back than the front.
+
+It is also important to remember to update our number of `_missilePoints` after firing off a missile. The number of points a missile was worth is its `AttackDamage`, though that will always be `1` for now.
+
+Lastly, we just need to update the `ShootTrigger` to know which `KillWall` it is attached to and tell the `PlayerMissiles` to `FireMissilesAtTarget` when it enters the trigger volume.
+
+```cs title="ShootTrigger.cs" linenums="1"
+using UnityEngine;
+
+public class ShootTrigger : MonoBehaviour
+{
+    [SerializeField] private KillWall _attachedKillWall;
+
+    private void OnTriggerEnter(Collider other)
+    {
+        PlayerMissiles playerMissilesCheck = other.GetComponent<PlayerMissiles>();
+
+        if (playerMissilesCheck != null)
+        {
+            playerMissilesCheck.FireMissilesAtTarget(_attachedKillWall);
+        }
+    }
+}
+```
+
+This was pretty code-heavy, but the result is pretty cool! You should now notice some of your collected missiles destroying the wall as you approach.
+
+Try collecting less than five missiles as well. You will see your missiles launch, but not enough will be fired to destroy the wall.
+
+It looks pretty rough right now. This guide will eventually be expanded with a module dedicated to visual effects and particles!
+
+![Working missiles demonstration](./res/5-3-1-missiles-launching.gif)
 
 ## Chapter 6: User Interface
+One major problem with our game is that the player cannot see how many missiles are required to destroy any given *Kill Wall*. Likewise, they cannot see how many missiles they own without painstakingly counting.
+
+We can fix both those problems by adding a rudimentary user interface which displays counters for wall HP and the missile count.
+
+1. UI for Kill Walls
+2. UI for Missile Count
 
 ## Chapter 7: Hazards
 
