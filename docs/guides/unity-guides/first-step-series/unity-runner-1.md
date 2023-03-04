@@ -1134,6 +1134,110 @@ We can fix both those problems by adding a rudimentary user interface which disp
 1. UI for Kill Walls
 2. UI for Missile Count
 
+### 1) UI for Kill Walls
+
+To keep things simple, we will use world space canvases that allow us to project UI elements on physical planes in our scene.
+
+#### Create the UI
+
+On the *Kill Wall* object, create a new `UI > Canvas`, which serves as a root for all of our UI elements. In order to make the UI appear in world space, change the Canvas' `Render Mode` to `World Space`.
+
+Now we can position our canvas, which is wildly too large. Reset the `Rect Transform` component (by using the ellipses button in the top right of the component), and change the `width` and `height` to `5`. Then, move the canvas so that it is just in front of the Kill Wall's -Z face center `(0, 4, -2.6)`.
+
+You can then add a `UI > Panel` object to the *canvas*, which will help our text stand out from the *Kill Wall*. It looks a little weird and pixelated- set the `Pixels Per Unit Multiplier` on the `Image` component to `5` and it will look correct.
+
+Now, to the *Panel*, add a `UI > Text - TextMeshPro`. You will need to do a series of things to get it to fit correctly within the *Panel*. Note that the first time you add a `Text - TextMeshPro` object, you will get a pop up saying you need to import the essentials package, which must do to get a working font. You do not need to import the extras.
+
+1. In the top-left anchor box, hold `ALT+Shift` and click on the bottom-right option to set the element to stretch across the entire *Panel*.
+2. Check the `Auto-Size` property.
+3. In `Auto Size Options`, set `Min` to `1` to allow the the text to shrink into the box.
+4. Change the text to "0".
+5. Change the alignment to `middle` and `center`.
+
+You should now see your "0" text is centered within the panel taking up as much space as is allowable.
+
+![Creating the Kill Wall UI](./res/6-1-1-create-UI.gif)
+
+#### Program the UI
+We need the text of our *Text(TMP)* object to be the numerical HP of the *Kill Wall* it represents, which is easy enough to do.
+
+In order to make the `KillWall` HP monitorable, we must make one small adjustment to the script.
+```cs title="KillWall.cs (frag)" linenums="1" hl_lines="1 6 19"
+using System;
+using UnityEngine;
+
+public class KillWall : MonoBehaviour
+{
+    public Action<int> OnHitPointsChanged;
+
+    [SerializeField] private int _hitPoints = 5;
+
+    public void TakeDamage(int damage)
+    {
+        _hitPoints -= damage;
+
+        if (_hitPoints <= 0)
+        {
+            Die();
+        }
+
+        OnHitPointsChanged?.Invoke(HitPoints);
+    }
+
+    ...
+
+```
+
+*Actions* allow other scripts to 'subscribe' to them and register some kind of response whenever the action is invoked. In this example, our `KillWall` will invoke the `OnHitPointsChanged` method, transmitting the number of HitPoints in a signal to any scripts which are subscribed to the Action.
+
+Our UI object can subscribe to the action, read the int trasmitted with the invocation, and update the UI accordingly.
+
+This is *significantly* more efficient than having the UI constantly check the value of the the `KillWall`'s HitPoints each frame and updating the text accordingly. Actions are great for these circumstances where things only need to periodically respond in reaction to an event.
+
+Create a new script `KillWallUI` and attach it to the *Text(TMP)* object.
+
+```cs title="KillWallUI.cs" linenums="1"
+using UnityEngine;
+using TMPro;
+
+[RequireComponent(typeof(TextMeshProUGUI))]
+public class KillWallUI : MonoBehaviour
+{
+    [SerializeField] private KillWall _killWall;
+
+    private TextMeshProUGUI _tmp;
+
+    private void Awake()
+    {
+        _tmp = GetComponent<TextMeshProUGUI>();
+    }
+
+    private void OnEnable()
+    {
+        _killWall.OnHitPointsChanged += UpdateText;
+        UpdateText(_killWall.HitPoints)
+    }
+
+    private void OnDisable()
+    {
+        _killWall.OnHitPointsChanged -= UpdateText;
+    }
+
+    private void UpdateText(int hitPoints)
+    {
+        _tmp.text = hitPoints.ToString();
+    }
+}
+```
+
+To register a function to an Action, we `+=` a function with an appropriate *parameter list* (that being one `int` type) to the Action. Whenever you register to an Action, **must also deregister the function** should the script ever be destroyed or be disabled. This is why this behaviour is done on every enable or activate (which also trigger on awake and on destroy respectively).
+
+Changing the text is simple as can be: Just set the `text` property to a string of the transmitted integer.
+
+Do not forget to set the `_killWall` property of the `KillWallUI` script instance to that on the *Kill Wall* object!
+
 ## Chapter 7: Hazards
 
 ## Conclusion
+
+MAKE SURE TO MENTION ALL ASSIGNEMTNS VIA THE INSPECTOR.
