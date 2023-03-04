@@ -1140,7 +1140,7 @@ To keep things simple, we will use world space canvases that allow us to project
 
 #### Create the UI
 
-On the *Kill Wall* object, create a new `UI > Canvas`, which serves as a root for all of our UI elements. In order to make the UI appear in world space, change the Canvas' `Render Mode` to `World Space`.
+On the *Kill Wall* prefab, create a new `UI > Canvas`, which serves as a root for all of our UI elements. In order to make the UI appear in world space, change the Canvas' `Render Mode` to `World Space`.
 
 Now we can position our canvas, which is wildly too large. Reset the `Rect Transform` component (by using the ellipses button in the top right of the component), and change the `width` and `height` to `5`. Then, move the canvas so that it is just in front of the Kill Wall's -Z face center `(0, 4, -2.6)`.
 
@@ -1194,6 +1194,12 @@ Our UI object can subscribe to the action, read the int trasmitted with the invo
 
 This is *significantly* more efficient than having the UI constantly check the value of the the `KillWall`'s HitPoints each frame and updating the text accordingly. Actions are great for these circumstances where things only need to periodically respond in reaction to an event.
 
+Also note the strange notation of the `?` operator. Actions are a *nullable* type, which means that they can have a valid value *or* be `null`. Using the `?` operator with a *nullable* type will only execute the instruction if the given *nullable* is non-null.
+
+[Learn more about events, delegates, and actions](https://gamedevbeginner.com/events-and-delegates-in-unity/)
+
+[Learn more about nullable types](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/nullable-value-types)
+
 Create a new script `KillWallUI` and attach it to the *Text(TMP)* object.
 
 ```cs title="KillWallUI.cs" linenums="1"
@@ -1236,7 +1242,427 @@ Changing the text is simple as can be: Just set the `text` property to a string 
 
 Do not forget to set the `_killWall` property of the `KillWallUI` script instance to that on the *Kill Wall* object!
 
+Not only can we now see the amount of HP a wall has, but it will actively count down to 0 as it takes damage!
+
+### 2) UI for Missile Count
+
+This will work almost identically to the UI rig we created for the *Kill Wall*.
+#### Create the UI
+
+As a child of the *Player*, create a new empty GameObject *Missile UI* and add a series of items as consecuative children of each other: `UI > Canvas`, `UI > Panel`, `UI > Text - TextMeshPro`. Configure them the same way as you did the UI stack we just made for the Kill Wall, change the *Panel* `Reference Pixels Per Unit` and make the same configuration to the `TextMeshPro` object.
+
+Also, make sure to set the `Render Mode` of the *Canvas* to `World Space` and be sure to center its rect transform. We will make this *Canvas* slightly smaller, using a `width` and `height` of `3`.
+
+Place the *Missile UI* GameObject along the ground. We want the UI Panel to appear on top of the road slightly behind the *Player* so position the *Missile UI* accordingly and then **rotate the Canvas 90 degrees on the X-Axis to make it flush against the ground**.
+
+The current colors do not contrast very well against our bright road. On the *Panel*, increase the opacity of the Image component's `Color` property a bit. Then, on the `Text (TMP)` object, change the `Vertex Color` to a dark grey.
+
+![Finished missile UI Canvas](./res/6-2-1-missile-ui-canvas.PNG)
+
+#### Program the UI
+
+Again, this will work almost identically to the last UI we rigged up: Create an Action on the `PlayerMissiles` script which is invoked whenever the number of `_missilePoints` changes, and update the UI accordingly.
+
+```cs title="PlayerMissiles.cs (frag)" linenums="1" hl_lines="1 6 10 20 34"
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+using Random = UnityEngine.Random;
+
+public class PlayerMissiles : MonoBehaviour
+{
+    public Action<int> OnMissilesChanged;
+
+    [SerializeField] private GameObject _missilePrefab;
+
+    ...
+    
+    public void AddPoint(int points)
+    {
+        _missilePoints += Mathf.Max(0, points);
+
+        OnMissilesChanged?.Invoke(_missilePoints);
+        SyncMissilesToPoints();     // Create missiles to catch up with the points
+    }
+
+    ...
+
+    public void FireMissilesAtTarget(KillWall killWall)
+    {
+        int cumulativeDamage = 0;
+
+        for (int i = _missileList.Count - 1; i >= 0 && cumulativeDamage < killWall.HitPoints; i--)
+        {
+            ...
+
+            OnMissilesChanged?.Invoke(_missilePoints);
+        }
+    }
+
+    ...
+
+    public int MissilePoints {get => _missilePoints; }
+}
+```
+
+We invoke the `OnMissilesChanged` action whenever we gain missile points or fire a missile.
+
+Note that we must add `using System;` to be able to use Actions. However, both the `UnityEngine` and `System` namespace introduce their own, identically-named `Random` class, which causes an ambigious call error when we make a `Random` call later in the file.
+
+To fix this, the code on line 6 specifies that `Random` *always* refers to the `UnityEngine` implementation.
+
+Now create another script `MissileUI` and attach it to the *Missile UI -> Panel -> Text (TMP)* GameObject.
+
+```cs title="MissileUI.cs" linenums="1"
+using UnityEngine;
+using TMPro;
+
+[RequireComponent(typeof(TextMeshProUGUI))]
+public class MissilesUI : MonoBehaviour
+{
+    [SerializeField] private PlayerMissiles _playerMissiles;
+
+    private TextMeshProUGUI _tmp;
+
+    private void Awake()
+    {
+        _tmp = GetComponent<TextMeshProUGUI>();
+    }
+
+    private void OnEnable()
+    {
+        _playerMissiles.OnMissilesChanged += UpdateText;
+        UpdateText(_playerMissiles.MissilePoints);
+    }
+
+    private void OnDisable()
+    {
+        _playerMissiles.OnMissilesChanged -= UpdateText;
+    }
+    private void UpdateText(int missileCount)
+    {
+        _tmp.text = missileCount.ToString();
+    }
+}
+```
+
+Wow, this looks awfully familiar, doesn't it? Do not forget to populate the `Player Missiles` property of the `MissileUI` script with the *Player*'s `Player Missiles` instance.
+
+---
+
+![Working HP and missile count UI](./res/6-2-2-working-missile-ui.gif)
+
+A fair amount of code has gone into getting what you see above working, good job getting this far!
+
 ## Chapter 7: Hazards
+In order for our game to be engaging, we need to make collecting missiles more challenging.
+
+We will accomplish this by creating *Hazard Zones*, which will constantly drain the number of missile points the *Player* has if they enter their trigger volume. This will be detrimental to the player if they accidentally cross them, but it will not severely punish them by instantly destroying them.
+
+In fact, we could actually design some interesting scenarios where it is worthwhile to go through a hazard zone to get some points on the other side.
+
+1. Hazard Zone Prefab
+2. Hazard Zone Script
+3. Moving Hazard
+
+### 1) Hazard Zone Prefab
+Our Hazard Zones will be rectangular, transparant volumes which the *Player* can pass through to negative effect.
+
+Create a new empty GameObject "Hazard Zone". Attach a `BoxCollider` component to the *Hazard Zone*, but leave its size alone for now. Check the `Is Trigger` property. As a child of the *Hazard Zone*, add a 3D cube and remove its `BoxCollider` component.
+
+We must move the `Center: Y` property of the *Hazard Zone*'s `BoxCollider` to `0.5` to make it flush with the road. Further, do the same with the `Position:Y` of the *Cube*.
+
+Change the scale of the *Hazard Zone transform itself* to make both the graphical cube and the trigger collider larger. 
+
+Lastly, a new material. Like every other time, we will apply it to the cube and give it a red color. However, you will also change `Surface Type` from `Opaque` to `Transparent`, which will allow us to use the alpha value of the `Base Map` to control how see-through the material is. Change the color to a reddish color with a lowered alpha value.
+
+Save the *Hazard Zone* as a prefab.
+
+### 2) Hazard Zone Script
+
+When the *Player* enters the trigger volume on the *Hazard Zone*, their missile points should be drained over time until the leave the volume. We can accomplish this by reducing their missile points by one on some reoccuring interval.
+
+In order to accomplish this, we must give `Missile.cs` a function to destroy themselves, and `PlayerMissiles.cs` needs to be upgraded with a public method to *deduct* missile points, which will then destroy some of the managed missiles to compensate.
+
+```cs title="Missiles.cs (frag)" linenums="1"
+...
+
+public void DestroyMissile()
+{
+    Destroy(gameObject);
+}
+
+...
+```
+
+```cs title="PlayerMissiles.cs (frag)" linenums="1"
+...
+
+public void RemoveMissilePoints(int points)
+{
+    _missilePoints -= Mathf.Max(0, points);
+    _missilePoints = Mathf.Max(0, _missilePoints);  // Prevent negative points
+
+    OnMissilesChanged?.Invoke(_missilePoints);
+    SyncMissilesToPoints();
+}
+
+...
+
+private void SyncMissilesToPoints()
+{
+    int missilesToCreate = _missilePoints - _missileList.Count;     // # of missiles needed to sync
+
+    if (missilesToCreate >= 0)
+    {
+        for (int i = 0; i < missilesToCreate; i++)
+        {
+            CreateMissile();
+        }
+    }
+    else
+    {
+        int missilePointsToDestroy = Mathf.Abs(missilesToCreate);
+
+        for (int i = _missileList.Count - 1; i >= 0 && missilePointsToDestroy > 0; i--)
+        {
+            Missile nextMissile = _missileList[i];
+            missilePointsToDestroy -= nextMissile.AttackDamage;
+
+            _missileList.RemoveAt(i);
+            nextMissile.DestroyMissile();
+        }
+    }
+}
+
+...
+```
+
+Note that since it is possible for `missileToCreate` to be negative now, `SyncMissilesToPoints` was upgraded to have separate behavior for when missiles need to be removed. Similarly to firing missiles, we remove missiles from the *back* of the list (for efficiency purposes) by de-listing them and calling the `DestroyMissile` method we created.
+
+---
+
+Create a new script `HazardZone.cs`, and attach it to the *Hazard Zone* object as a component.
+
+```cs title="HazardZone.cs" linenums="1"
+using UnityEngine;
+
+[RequireComponent(typeof(Collider))]
+public class HazardZone : MonoBehaviour
+{
+    [SerializeField] private float _ticksPerSecond = 1f;
+
+    private PlayerMissiles _targetPlayerMissiles;
+
+    private bool _damagingPlayer;
+    private float _tickInterval;
+    private float _timeSinceLastTick;
+
+    private void Awake()
+    {
+        _tickInterval = 1 / _ticksPerSecond;
+        _damagingPlayer = false;
+        _timeSinceLastTick = _tickInterval;
+    }
+
+    private void Update()
+    {
+        if (_damagingPlayer)
+        {
+            // Accumulate time, damage the player and reset the accumulation when the interval is reached.
+            _timeSinceLastTick += Time.deltaTime;
+            if (_timeSinceLastTick >= _tickInterval)
+            {
+                DamagePlayer();
+                _timeSinceLastTick = 0f;
+            }
+        }
+    }
+
+    private void DamagePlayer()
+    {
+        _targetPlayerMissiles.RemoveMissilePoints(1);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        PlayerMissiles playerMissiles = other.gameObject.GetComponent<PlayerMissiles>();
+        if (playerMissiles != null)
+        {
+            _damagingPlayer = true;
+            _timeSinceLastTick = (3 * _tickInterval) / 4;   // Very small grace period
+            _targetPlayerMissiles = playerMissiles;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        PlayerMissiles playerMissiles = other.gameObject.GetComponent<PlayerMissiles>();
+        if (playerMissiles != null)
+        {
+            _damagingPlayer = false;
+            _targetPlayerMissiles = null;
+        }
+    }
+}
+```
+
+We start by defining a `_ticksPerSecond` field which describes how many times the player should be damaged per second that they remain in the trigger volume. This is then internally converted to a `_tickInterval` value (by taking `1 / _ticksPerSecond`) to be equal to the number of seconds it takes to do one tick of damage.
+
+We do this because it is easier to understand the damage rate as a number of ticks per second getting larger as it becomes more threatening, rather than an interval getting smaller as it becomes more dangerous (which is what the script needs to know to do the damage).
+
+When a `PlayerMissiles` object enters the volume, it is tracked and `_damagingPlayer` is set to true to allow our damage logic to occur per-frame. We also pre-set the tick timer `_timeSinceLastTick` to 75% so they player has a very small grace period before they take their first instance of contact damage with the zone.
+
+Per update, we accumulate time into `_timeSinceLastTick` using `Time.deltaTime`, and if it is greater than the interval, the player is damaged and the timer resets.
+
+When the `PlayerMissiles` exits the volume, we untrack the object and stop damaging the player.
+
+---
+
+Make your Hazard Zone a bit longer and push back your *Kill Wall* a bit (adding another road segment if necessary). I personally bumped up the `Ticks Per Second` property to `2`. Test it out in Play Mode!
+
+Note that our hazards cannot directly destroy the player, but since we plan on having *Kill Walls* be reoccuring every so often, losing or missing too many missile points will result in failure.
+
+### 3) Moving Hazard
+
+For our very last addition to our prototype, we will up the ante a little by making a moving hazard. This hazard will *Ping-Pong* horizontally along the road, so the player will need to actively dodge it.
+
+We will create a general purpose script which can Ping-Pong something on the X-Axis. Create a new script `XPingPong.cs`.
+
+```cs title="XPingPong.cs" linenums="1"
+using UnityEngine;
+
+public class XPingPong : MonoBehaviour
+{
+    [SerializeField] private float _xMinimum = -8f;
+    [SerializeField] private float _xMaximum = 8f;
+
+    [SerializeField] private float _movementSpeed = 5f;
+    
+    private bool _movingToMaximum = true;
+
+    private Vector3 _maximumPosition;
+    private Vector3 _minimumPosition;
+
+    private void Awake()
+    {
+        _maximumPosition = new Vector3(_xMaximum, transform.position.y, transform.position.z);
+        _minimumPosition = new Vector3(_xMinimum, transform.position.y, transform.position.z);
+    }
+
+    private void Update()
+    {
+        if (_movingToMaximum)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, _maximumPosition, _movementSpeed * Time.deltaTime);
+            if (Vector3.Distance(transform.position, _maximumPosition) <= 0.5f)
+            {
+                _movingToMaximum = false;
+            }
+        }
+        else
+        {
+            transform.position = Vector3.MoveTowards(transform.position, _minimumPosition, _movementSpeed * Time.deltaTime);
+            if (Vector3.Distance(transform.position, _minimumPosition) <= 0.5f)
+            {
+                _movingToMaximum = true;
+            }
+        }
+    }
+}
+```
+
+We define a x minimum and maximum for the transform to translate between. That range is then converted to two positions `_maximumPosition` and `_minimumPosition`.
+
+Per Update, we will move towards either the `_maximumPosition` or `_minimumPosition`, swapping between the two as we reach either of them. Pretty simple!
+
+We can now add this script to *any* object we want to ping pong on our road. You could even add it to your *Point PickUps*, but you would need to create a third intermediary script to disable the ping-pong behavior when the pick up starts flying at the *Player*, which may be a good exercise for your own time.
+
+Speaking of bonus exercise, you could also try creating a *Spinning* hazard which has a constant Y-Axis rotation. This would actually be easier to implement as well, since you do not need to cache positional endpoints. The `Transform.Rotate` method would work well for making the spinning behavior. Give it a try on your own!
+
+Note, you would likely need to crank up the `Ticks Per Second` on these moving hazards, as they may pass out of the player before they can do any worry-some damage.
+
+## Chapter 8: Level Creation & Building
+
+We have a little bit more housekeeping to do before our little prototype is finished! We will want to flesh out our level to show off more mechanics, add some controls which allow us to reset and exit our game, and create a full build of the game!
+
+1. PointPickUp.cs Fix
+2. Level Creation
+3. GameManager
+4. Creating a Build
+
+### 1) PointPickUp.cs Fix
+We need to make one small change to our `PointPickUp.cs` script. As you may have noticed, rotating one of these pick ups on the Y-Axis can cause their tracking logic to completely break. This is because `Transform.Translate` works according to local space.
+
+To fix this, we must simply unparent pick ups once they start flying and ensure they are facing along the forward direction, similar to what we do for firing missiles.
+
+```cs title="PointPickUp.cs (frag)" linenums="1" hl_lines="12 13"
+private void OnTriggerEnter(Collider other)
+
+...
+
+    {
+        // Try to find PlayerMissiles Component on entering GO.
+        PlayerMissiles playerCheck = other.GetComponent<PlayerMissiles>();
+
+        // If component was found...
+        if (playerCheck != null)
+        {
+            transform.parent = null;
+            transform.rotation = Quaternion.LookRotation(Vector3.forward);
+            _targetPlayerMissiles = playerCheck;
+            _velocityDirection = Vector3.Normalize(playerCheck.transform.position - transform.position);
+        }
+    }
+}
+```
+
+### 2) Level Creation
+
+We ought to extend our road out a bunch and add more content to it in order to show off what we have made!
+
+#### Hierarchy Organization
+
+Before we start, create a new empty GameObject *Environment* and make reset its `Transform` component. We will place almost every physical GameObject that composes our level as a child of it- The road segments, the Point PickUps, any Kill Walls, and Hazard Zones. I will also fold our Directional Light and Global Volume in there as well.
+
+Furthermore, we will create a few more empty GameObjects in the *Environment*: *Roads* *Pick Ups* *Kill Walls* and *Hazard Zones*, which we will move all objects of the respective types under. 
+
+This will make our hierarchy MUCH cleaner. It also helps us separate important GameObjects like our *Camera Rig* and our *Player* out from less important features.
+
+#### Level Building
+
+Add about six more road segments to the level and fill it up with Kill Walls, Hazards, and Pick Ups in various configurations to make an interesting level! At the end of the level, just create a Kill Wall with too much health to destroy so the player does not go off the end of the game.
+
+The following is a little bit of advice on this process.
+
+##### Pick Up Prefabs
+It is pretty satisfying to pick up multiple points in a "string", so let's just create some *Point String* prefabs which are little groups of pick ups in a sequence. I also created a diamond string of four points.
+
+![Straight string of points](./res/8-1-2-straight-string.PNG)
+![Diamond string of points](./res/8-1-2-diamond-string.PNG)
+
+##### Pick Up and Hazard Synergy
+
+By combining hazards with pick ups intelligently, we can create sections of our levels which allow some skill expression by the player, which makes our rather simple game much more interesting.
+
+Consider the following placement:
+
+![Tight turn hazard placement](./res/8-1-2-tight-turn-hazard.PNG)
+
+
+This hazard forces the player to either the left or right side of the road, and they will be given a group of points if they choose either path. However, if the player chooses the right path and they cut left *directly* after they clear the hazard, they can collect the points on the left side without taking damage from the hazard.
+
+Here is another scenario:
+
+![Cut into hazard placement](./res/8-1-2-cut-into-hazard.PNG)
+
+In this placement, the three orange pick ups are unreachable without hitting a hazard zone. However, it is actually **worthwhile** to lose one or two missiles by cutting through the hazard volume in order to pick up the nine points from the orange group.
+
+It is even worth it when you factor in the opportunity cost of getting the group of four yellow pick ups on the left side, which is what would conventionally seem more appealing.
+
+The interaction between these two game elements is much more engaging than they are individually. Designing game mechanics which play off of each other synergistically is a great way to **do more with less**- which is a great principle to stride towards when you are doing indie development!
 
 ## Conclusion
 
