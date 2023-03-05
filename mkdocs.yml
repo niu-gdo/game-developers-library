@@ -1,6 +1,37 @@
 site_name: Game Developer's Library
 theme:
   name: material
+  palette: 
+
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      primary: deep purple
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      primary: deep purple
+      scheme: default 
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      primary: deep purple
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+    
+  features:
+    - content.code.copy
+    - content.code.annotate
+  
+  plugins:
+    - optimize
 
 nav:
   - Home: 'index.md'
@@ -21,3 +52,16 @@ nav:
   - Contribution:
     - 'Using MkDocs': 'contribution/mkdocs-usage.md'
     - 'Making New Pages': 'contribution/making-new-pages.md'
+
+markdown_extensions:
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
