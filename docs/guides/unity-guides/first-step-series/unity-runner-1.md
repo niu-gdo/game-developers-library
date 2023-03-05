@@ -782,6 +782,8 @@ As a nice touch, we also introduce some C# XML documentation- something that is 
 
 [Learn more about C# XML documentation](https://www.oreilly.com/library/view/c-in-a/0596001819/ch04s10.html)
 
+On the Inspector for the *Player*, you will need to set the `Missile Prefab` and `Missile Store` properties or else you will get a null reference exception. Drag-and-drop from the Project window *Prefab* folder to set the prefab and drag-and-drop the *Missile Store* GameObject to get the transform.
+
 Test your game and you will see new missiles appearing as you collect points, nice!
 
 ### 4) Easy Visual Improvements
@@ -930,7 +932,7 @@ using UnityEngine;
 public class KillWall : MonoBehaviour
 {
 
-    [SerializeField] private 
+    [SerializeField] private int _hitPoints = 5;
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -1117,6 +1119,8 @@ public class ShootTrigger : MonoBehaviour
     }
 }
 ```
+
+Drag-and-drop the *Kill Wall* to the `Attached Kill Wall` property.
 
 This was pretty code-heavy, but the result is pretty cool! You should now notice some of your collected missiles destroying the wall as you approach.
 
@@ -1633,7 +1637,7 @@ This will make our hierarchy MUCH cleaner. It also helps us separate important G
 
 #### Level Building
 
-Add about six more road segments to the level and fill it up with Kill Walls, Hazards, and Pick Ups in various configurations to make an interesting level! At the end of the level, just create a Kill Wall with too much health to destroy so the player does not go off the end of the game.
+Add about six more road segments to the level and fill it up with Kill Walls, Hazards, and Pick Ups in various configurations to make an interesting level! At the end of the level, just create a Kill Wall with too much health to destroy so the player does not go off the end of the game. Try using some moving hazards as well!
 
 The following is a little bit of advice on this process.
 
@@ -1664,6 +1668,106 @@ It is even worth it when you factor in the opportunity cost of getting the group
 
 The interaction between these two game elements is much more engaging than they are individually. Designing game mechanics which play off of each other synergistically is a great way to **do more with less**- which is a great principle to stride towards when you are doing indie development!
 
+### 3) GameManager
+
+When we want to reset or exit our game, we simply exited and entered Play Mode to reset the scene. This is not a good solution for when our game is built though, as the player would be unable to close the game and would need to re-open it every time they lose!
+
+We will make a pretty brief script that will allow the player to reload the scene and exit the game on demand.
+
+#### Add New Controls
+
+We will want to create two input actions for this control. *Space* will reset our game and *Escape* will quit.
+
+Using the project window, open the Input Actions assets we created a while ago to map player input. Select the *Player* Action Map and create a *Reset* and *Quit* action, bound to *Space* and *Escape* respectively (Use the *+v* button to add a new binding, and set the path to the desired button).
+
+Again, do not forget to hit the *Save Asset* button!
+
+![New GameManager Inputs](./res/8-2-1-add-new-controls.PNG)
+
+#### GameManager 
+
+First, in your *Scenes* folder in the Project window, rename the *SampleScene* to *Main*, which is a better name for our main scene.
+
+To the scene, create a new empty object (not under the *Environment* GameObject) and name it *Game Manager*. You will also need to add a `PlayerInput` component and set the `Actions` property to your Input Actions asset.
+
+Create a script `GameManager` and attach it to the *Game Manager* as a component.
+
+```cs title="GameManager.cs" linenums="1"
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+
+[RequireComponent(typeof(PlayerInput))]
+public class GameManager : MonoBehaviour
+{
+    private void ResetLevel()
+    {
+        SceneManager.LoadScene("Main");
+    }
+
+    private void QuitGame()
+    {
+        Application.Quit(0);
+    }
+
+    private void OnReset(InputValue inputValue) => ResetLevel();
+    private void OnQuit(InputValue inputValue) => QuitGame();
+}
+```
+
+The `UnityEngine.SceneManagement` allows us access to the `SceneManager`, which enables usage of the `SceneManager` which can load scenes. In the `ResetLevel` method, we simply tell it to load the *Main* scene, which will essentially reload the level from scratch.
+
+The `QuitGame` method does exactly that- closes the application with an exit code of 0 (An OK status code).
+
+Both of those methods are invoked by a Input Action response method `OnReset` or `OnQuit`. Note that you could just execute those two calls in the Input Action response bodies themselves, but it is usually better practice to just have them call methods instead.
+
+If you enter Play Mode, you can now use *Space* to reset the level. **Quitting will not work in Play Mode**, however!
+
+### 4) Creating a Build
+
+The last thing we need to do is make a build of our game so that it can be shared!
+
+In the top right of the Unity Editor, select `File > Build Settings`. Ensure that your *Main* scene shows up in the scenes list and the platform selected is *Windows, Mac, Linux*, then select *Build*.
+
+A file selector will open to ask where you would like to build to, which begins one level above your *Assets* folder. Here, create a new folder called *Builds*, and a new folder within that called *Rocket Runner 0.1.0*, and select that as your build folder.
+
+Once it is done, you can open that folder to find your executable to run the game. The entire *Rocket Runner 0.1.0* folder is what you would send or upload somewhere to share your game at this point!
+
+Note that when you are developing a larger project, you should **test builds of your game somewhat frequently**, do not wait until you are finished to test your builds for the first time!
+
 ## Conclusion
+
+Congratulations, you've finished this pretty lengthy tutorial! \o/
+
+Even though our game looks pretty simple on the surface, you have actually learned some good stuff to springboard you into your own projects:
+
+* Physics and non-physics driven movement
+* Collider and trigger use and event response
+* Work on some more complex, composited GameObjects
+* Using Actions to create custom events
+* World-space user interfaces
+* Some vector maths practice
+
+### Where Do I Go From Here?
+
+Game Development is a deeply practice driven discipline. Before you start working on your dream projects, keep doing what you did here- find long-form guides that can bring you through the process of **building a whole, small game, not just a couple features**. At the end of the day, your ability to make good games will depend on your knowledge of the entire game-making process, so absorbing a good volume of comprehensive guides will make you a strong developer more so than anything when you are starting out.
+
+Full video games can easily become some of the most complicated pieces of software you will ever work on, so do not be surprised to find out that gaining proficiency will be a slow process that will take a lot of time and dedication. The best thing you can do is pace yourself and set a schedule of time dedicated to it!
+
+### What Else is There *Here* for Me?
+I very particularly made *Rocket Runner* to be a game which can be expanded in many different ways. It is a good baseline by which many improvements could be made- all of which would be individual guides all on their own. Some examples of improvements that could be made are as follows:
+
+* We could turn our game into an **endless** runner by procedurally generating new road segments. The difficulty could be ramped up as time goes along.
+    * *This* would be a major improvement towards making it into a very solid game. Definitely come back to this project and give this a try if nothing else once you have more experience.
+* Many, many visual effects could be added:
+    * Missile explosion particle effects
+    * Particle or debris effects when the *Player* or *Kill Walls* are destroyed
+    * Point PickUps could be made prettier, turned into orb-like pick ups.
+    * Trails on missiles, as well as making them fly at *Kill Walls* in a more interesting pattern
+    * A better looking skybox and some lighting effects.
+* Sound effects could be added to movement, explosions, and missile firing. Some music would be nice too.
+* A main menu and pause screen would make the game a bit less clunky. Maybe a leaderboard for *distance traveled* too?
+
+Ideally in the future, this guide will be expanded to tackle some of the above improvements in some additional modules.
 
 MAKE SURE TO MENTION ALL ASSIGNEMTNS VIA THE INSPECTOR.
