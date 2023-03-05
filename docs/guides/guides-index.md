@@ -1,25 +1,22 @@
 # Guides
 
-Guides are long-form, detailed write ups on how readers can go about implementing some kind of strategy within their projects.
+Compared to articles, guides are more generalized write-ups about an expansive topic. The purpose of them is to provide a reader a wealth of resources and tips they can use to learn about a particular topic.
 
-Most will be engine, library, or tool specific, but some guides may be able to provide generalized details on reproduction in any application.
+Guides are **not** long, step-by-step tutorials that readers will recreate on their systems. Instead, they should read like an introductory lecture on the given topic by providing insight on the topic and showing how the provided links and resources can help readers get up to speed.
+
+For example, a guide on *Procedural Terrain Generation* would give an easily digestable overview on the topic, describing what kind of methods are used for implementation, difficuly, what can be produced from the technique, etc. You would then give **links to other** materials one can use to learn more about the subject. 
+
+## Game Developer Mathematics
+
 
 ## Unity
-* [Additive Scene Loading](./unity-guides/additiveloading.md) by Harry
-* File Saving by Jeffrey
-* Coping With Long Load Times by Larry
+* [First Steps Series: Learn How to Use Unity!](./unity-guides/first-step-series/unity-first-step-index.md)
 
 ## Unreal
-* Making Things Shiny by Tyler
-* Making a Water Shader by Byler
-* Coping With using Epic Games Launcher by Lyler
+* Knowledgable about the Unreal engine? Help us out by creating some literature here!
 
 ## Godot
-* Creating an Inventory System by Colton
-* Exporting to Android / iOS by Jesse
-* Coping With the Built-In Text Editor by Lily
+* Godot guides coming in the future, especially once 4.0 has mutured a bit.
 
 ## Blender
-* Making Better Fingers by Courtney
-* Rigging a Humanoid by Jacob
-* Donut by Nick
+* 

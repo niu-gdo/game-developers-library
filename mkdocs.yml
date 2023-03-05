@@ -33,6 +33,21 @@ theme:
   plugins:
     - optimize
 
+markdown_extensions:
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+# Do not touch anything above here!
+
+# Here is where you can route new pages
 nav:
   - Home: 'index.md'
   - Guides:
@@ -52,16 +67,3 @@ nav:
   - Contribution:
     - 'Using MkDocs': 'contribution/mkdocs-usage.md'
     - 'Making New Pages': 'contribution/making-new-pages.md'
-
-markdown_extensions:
-  - attr_list
-  - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
-  - pymdownx.highlight:
-      anchor_linenums: true
-      line_spans: __span
-      pygments_lang_class: true
-  - pymdownx.inlinehilite
-  - pymdownx.snippets
-  - pymdownx.superfences
