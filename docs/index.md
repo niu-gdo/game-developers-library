@@ -6,6 +6,6 @@ The Game Developer's Library (GDL) is a repository of articles which serve to ed
 
 Members of NIU's Indie Game Developers Organization may become contributors by contacting this repository's administrator at this page's [GitHub Repo](https://github.com/niu-gdo/game-developers-library)
 
+* [Tutorials](./tutorials/tutorials-index.md)
 * [Guides](./guides/guides-index.md)
 * [Articles](./articles/articles-index.md)
-* [Tutorials](./)

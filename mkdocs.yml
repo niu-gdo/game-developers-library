@@ -50,20 +50,25 @@ markdown_extensions:
 # Here is where you can route new pages
 nav:
   - Home: 'index.md'
+  - Tutorials:
+    - 'Tutorials Index': 'tutorials/tutorials-index.md'
+    - Unity:
+      - First Steps:
+        - 'Introduction': 'tutorials/unity/first-step-series/unity-first-step-index.md'
+        - 'Install Unity': 'tutorials/unity/first-step-series/unity-first-step-install.md'
+        - 'Create a New Project': 'tutorials/unity/first-step-series/unity-first-step-new-proj.md'
+        - 'Rocket Runner Base': 'tutorials/unity/first-step-series/unity-runner-1.md'
   - Guides:
     - 'Guide Index': 'guides/guides-index.md'
-    - 'Unity Guides':
-      - 'First Step Series':
-        - 'Introduction': 'guides/unity-guides/first-step-series/unity-first-step-index.md'
-        - 'Install Unity': 'guides/unity-guides/first-step-series/unity-first-step-install.md'
-        - 'Create a New Project': 'guides/unity-guides/first-step-series/unity-first-step-new-proj.md'
-        - 'Rocket Runner Part 1': 'guides/unity-guides/first-step-series/unity-runner-1.md'
+
   - Articles:
     - 'Article Index': 'articles/articles-index.md'
     - 'Unity Articles':
       - 'Project Type Capabilities': 'articles/unity-articles/unity-type-capabilities.md'
       - 'Introduction to the Editor': 'articles/unity-articles/unity-editor-introduction.md'
       - 'Scriptable Render Pipelines': 'articles/unity-articles/unity-render-pipelines.md'
+
+
   - Contribution:
     - 'Using MkDocs': 'contribution/mkdocs-usage.md'
     - 'Making New Pages': 'contribution/making-new-pages.md'

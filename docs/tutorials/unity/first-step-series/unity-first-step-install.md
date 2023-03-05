@@ -47,7 +47,7 @@ Before continuing, **consider changing your *installs location* in Unity Hub's p
 
 In Unity Hub, go to 'Installs', then select 'Install Editor'.
 
-Pick the version Unity Recommends, likely one tagged 'LTS', or 'Long Term Support'.
+For your own projects, you should pick the 'LTS' (Long-term support) version Unity recommends. However, this tutorial series uses version `2021.3.19f1`
 
 ### Installation Modules
 When installing a version of Unity, you will get the option of adding some additional modules.  

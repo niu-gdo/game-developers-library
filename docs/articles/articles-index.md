@@ -1,8 +1,6 @@
 # Articles
 
-Articles are pages which educate readers on some topic related to game development. Unlike guides, they do not strictly walk readers through some kind of process to achieve an outcome in their projects, but simply teach some principle.
-
-Articles can be engine / library / tool specific, or they can be general knowledge.
+Articles are pages which educate readers on some specific topic in game development or about a tool.
 
 ## General Game Development
 * [Frame Updates and Frame Rate Dependency (Coming Soon)]()
