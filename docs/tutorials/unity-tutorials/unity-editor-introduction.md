@@ -32,7 +32,8 @@ Upon opening Unity, you will be presented with the default layout of Unity's mos
 * **Inspector**
     * This window is your best friend. Any currently selected GameObject or file in the Project window will show up in the Inspector. From there, you will have the ability to edit all kinds of properties of the item, as well as the properties of components for GameObjects.
 
-There are many, many more windows which can be spawned by using the Window dropdown at the top of the Editor, but they usually are not important enough to have docked at all times.
+???+ info "More Windows"
+    There are many, many more windows which can be spawned by using the Window dropdown at the top of the Editor, but they usually are not important enough to have docked at all times.
 
 ### Editor Layouts
 The editor's layout can be re-organized in practically any way you desire. To do so, simply drag the tab representing the window to another location. You can split docks into two, tabulate them with other windows in a dock, or push them along the sides to create new docks. They can also of course be resized.  
@@ -43,11 +44,12 @@ If you change your layout from the default, it may reset back to the default the
 
 Keep in mind, you can save multiple layouts for different workflows- have a workflow completely dedicated to animation or compositing.
 
-#### Chef's Special
-I personally find the default layout annoying, since you have to drag your mouse across the entire screen to go back and forth between the Hierarchy and the Inspector windows- something I do often.
+???+ tip
+    I personally find the default layout annoying, since you have to drag your mouse across the entire screen to go back and forth between the Hierarchy and the Inspector windows- something I do often.
 
-My 'Right-Heavy' layout moves the Hierarchy to be docked just left of the Inspector, which also gives me a nice and large dock for the Scene and Game views.  
-Additionally, I often use Editor scripts which may print to the Console while I am in edit mode, so I split the Console and Project windows into two docks along the bottom so they are always open.
+    My 'Right-Heavy' layout moves the Hierarchy to be docked just left of the Inspector, which also gives me a nice and large dock for the Scene and Game views.
+
+    Additionally, I often use Editor scripts which may print to the Console while I am in edit mode, so I split the Console and Project windows into two docks along the bottom so they are always open.
 
 ![Picture of my 'Right-Heavy' Layout](./unity-editor-introduction-res/right-heavy-layout.png)
 
@@ -56,7 +58,7 @@ In order to explore the other windows in more detail, we should add some GameObj
 
 Right-click on any empty space within the Hierarchy to get a drop-down menu of new GameObjects you can create. Pick `3D Object -> Plane`.
 
-A new GameObject "Plane" will appear at the bottom of your hierarchy. You may have also noticed the new geometry added in the scene view! Let's rename the plane to "Ground" by selecting it and pressing `F2` to rename it.
+A new GameObject "Plane" will appear at the bottom of your hierarchy. You may have also noticed the new geometry added in the scene view! Let's rename the plane to "Ground" by selecting it and pressing ++f2++ to rename it.
 
 Well, you are basically a pro now. Try adding two new "Cube" objects and one new "Cylinder" to the hierarchy- they will also be in the `3D Object` section. Rename the Cubes to "Bottom" and "Top", and the Cylinder to "Pillar", and I will meet you over in the scene view!
 
@@ -65,23 +67,23 @@ Well, you are basically a pro now. Try adding two new "Cube" objects and one new
 Now that we have some items in our scene view to give us a frame of reference, let's learn how to move our scene camera.
 
 * **Orbit**
-    * To Orbit the camera, hold down `ALT`, then click-drag your cursor along the scene view. This will spin your camera about an imaginary pivot some distance in front of you.
+    * To Orbit the camera, hold down ++alt++, then click-drag your cursor along the scene view. This will spin your camera about an imaginary pivot some distance in front of you.
 * **Zoom**
-    * To Zoom the camera, scroll your scroll wheel *or* hold down `ALT` and drag with the right mouse button.
+    * To Zoom the camera, scroll your scroll wheel *or* hold down ++alt++ and drag with the right mouse button.
     * Note that zoom in will bring you closer to the "imaginary pivot point" in front of your camera, so you can only zoom in so far. Try zooming in very close and then orbiting if you are confused.
 
 * **Pan**
-    * To Pan the camera, hold down the middle-mouse button and drag (You may have to hold `ALT` first, depending on your pointer device).
+    * To Pan the camera, hold down the middle-mouse button and drag (You may have to hold ++alt++ first, depending on your pointer device).
 
 * **Flythrough**
     * Flythrough allows you to navigate your scene with flight controls. To start flythrough mode, hold down right-click on your Scene View.
-        * To move, use W, A, S, and D to move horizontally. Q & E can be used to move up or down relative to the camera.
-        * Hold shift while moving like this to move faster.
+        * To move, use ++w++, ++a++, ++s++, and ++d++ to move horizontally. ++q++q++ & ++e++ can be used to move up or down relative to the camera.
+        * Hold ++shift++ while moving like this to move faster.
         * Move your mouse to change the orientation of the camera.
 
 
 * **Focus**
-    * When an item is selected in the Hierarchy, you can press `F` with your cursor over the Scene View to move your camera to the correct zoom and location to view the entire selected object.
+    * When an item is selected in the Hierarchy, you can press ++f++ with your cursor over the Scene View to move your camera to the correct zoom and location to view the entire selected object.
     * You can also do this by double-clicking any object in the Hierarchy.
     * This is very useful if you have taken your camera on a while adventure and need to find your scene again!
 
@@ -95,7 +97,7 @@ Your Scene View has a 'Tool Shelf' which gives you the ability to intuitively ch
 
 ![Unity-Tool-Shelf](./unity-editor-introduction-res/Tool-Shelf.png)
 
-If you cannot see your Ground plane, press 'F' in the Scene View to focus the selected object. You should see a large, Red, Green, and Blue gizmo. Clicking and dragging on the Gizmo's handles will let you move the plane in the X, Y, and Z axis respectively. Give it a try.
+If you cannot see your Ground plane, press ++f++ in the Scene View to focus the selected object. You should see a large, Red, Green, and Blue gizmo. Clicking and dragging on the Gizmo's handles will let you move the plane in the X, Y, and Z axis respectively. Give it a try.
 
 If you want some more control over your GameObject's transformations, take a look over on the Inspector window while it is selected. *All* GameObjects have a Transform component which dictates it's position within the scene (The Scene View tools are actually just tools for manipulating values in the Transform component!).
 
@@ -103,7 +105,11 @@ You can type in exact values for your GameObject's Position, Rotation, and Scale
 
 Traditionally, we like to keep our scenes centered around the origin point (0, 0, 0), so let's actually zero-out all the position elements in the Plane's Transform component.
 
-**Pro tip**: You can clear out *all* Transform values by 'resetting' the Transform component.  
+???+ tip "Component Reset"
+    You can clear out *all* Transform values by 'resetting' the Transform component.
+
+    In fact, you can do this for any component. The *reset* option will set all properties to the component's default values.
+    
 ![Reset-Component](./unity-editor-introduction-res/reset-component.png)
 
 #### Scale

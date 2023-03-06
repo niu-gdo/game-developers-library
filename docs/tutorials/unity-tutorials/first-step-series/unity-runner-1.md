@@ -25,11 +25,12 @@ The `Models` folder contains an FBX (3D model file) *Octahedron* I made, which i
 The `Textures` folder contains a 128x128 grid texture which we will use for the ground, as it would be difficult to perceive movement against a ground with no texture. You may want to hang onto this texture, since it is a useful placeholder to have on hand in other projects.
 
 ### 2) Enable the Unity Input System
-By default, Unity projects come loaded with what is called the Legacy Input Manager, a system which Unity used to use to allow reading player input into game scripts.
+???+ info "Legacy Input System"
+    By default, Unity projects come loaded with what is called the Legacy Input Manager, a system which Unity used to use to allow reading player input into game scripts.
 
-While it is still a fully servicable way to capture player input (and in many ways, easier to initially set up), 2019 brought forward the 1.0 release of the new *Input System* package. The Input System offers a significantly more sophistocated design for managing player input across multiple devices, processing player input, reading input events, and much more than can be explained here.
+    While it is still a fully servicable way to capture player input (and in many ways, easier to initially set up), 2019 brought forward the 1.0 release of the new *Input System* package. The Input System offers a significantly more sophistocated design for managing player input across multiple devices, processing player input, reading input events, and much more than can be explained here.
 
-The new Input System should be considered the 'canonical' way of capturing player input. Even though it is a bit tougher to learn, the greater degree of control will be of great use when you expand into bigger projects!
+    The new Input System should be considered the 'canonical' way of capturing player input. Even though it is a bit tougher to learn, the greater degree of control will be of great use when you expand into bigger projects!
 
 #### Install the Input System Package
 You can (and should) install the Input System package using the editor itself. Along the top, use the dropdown windows to select `Window > Package Manager`
@@ -38,7 +39,8 @@ From there, switch the Packages displayed from `Packages: In Project` to `Packag
 
 Once installation is complete, a dialog box will pop up informing you that Unity needs to be rebooted to enable the Input System backend, which you should do.
 
-NOTE: Once rebooted, you can return to the package to download some Input System sample scenes, which can be useful for figuring out how to work with it in future projects. You do not have to do that for this guide.
+???+ note "Input System Samples"
+    Once rebooted, you can return to the package to download some Input System sample scenes, which can be useful for figuring out how to work with it in future projects. You do not have to do that for this guide.
 
 ## Chapter 1: Scene Groundwork
 Our game's environment will be a long road (going in the positive Z-axis direction) with two walls to keep the player in. That is easy enough to accomplish with a plane and two cubes!
@@ -63,7 +65,7 @@ We want to create 'railings' along our road which will stop the player from goin
 
 We will need to move the cube to block the edges of the plane, so change its position to be `(8.5, 0.5, 0)`. Rename the cube to *Right Wall*
 
-We also, of course, need a left wall. Make life easier for yourself by duplicating the right wall! Select the Right Wall and press `Ctrl+D` to duplicate the GameObject. Then, change the new wall's X Position to `-8.5`, and rename it to *Left Wall*.
+We also, of course, need a left wall. Make life easier for yourself by duplicating the right wall! Select the Right Wall and press ++ctrl+d++ to duplicate the GameObject. Then, change the new wall's X Position to `-8.5`, and rename it to *Left Wall*.
 
 #### Grouping
 These three GameObjects make up our road. Since we realistically always want them to keep their positions and scales relative to eachother, we should 'group' them together by making them siblings of one GameObject.
@@ -91,20 +93,20 @@ As mentioned previously, we want the player to look like they are floating, sele
 
 ![Player Hierarchy](./res/1-2-PlayerHierarchy.PNG)
 
-#### :octicons-question-16: Why Are we Doing it This Way?
-You may be wondering why we have chosen to structure our player this way. Why not just use the Octohedron as our player root, for example? There is no immediate reason why you cannot do this, but it will bite you in the future.
+???+ info "Why Are we Doing it This Way?"
+    You may be wondering why we have chosen to structure our player this way. Why not just use the Octohedron as our player root, for example? There is no immediate reason why you cannot do this, but it will bite you in the future.
 
-For starters, many complex GameObjects will often need to consist of multiple GameObjects rooted under the same parent (similar to the *Road* we made earlier). Since children inherit their parent's Transforms (positions, rotations, and scales), we want to try and separate the hierarchy of unrelated items in our object as best as possible.
+    For starters, many complex GameObjects will often need to consist of multiple GameObjects rooted under the same parent (similar to the *Road* we made earlier). Since children inherit their parent's Transforms (positions, rotations, and scales), we want to try and separate the hierarchy of unrelated items in our object as best as possible.
 
-For example, later we will make our Octohedron model spin as it flies through the level. If we had everything parented to our Octohedron model, it would make **everything** on the player spin, which would be a huge mess!
+    For example, later we will make our Octohedron model spin as it flies through the level. If we had everything parented to our Octohedron model, it would make **everything** on the player spin, which would be a huge mess!
 
-Therefore, we create a GameObject specifically for the player's graphical representation, and put the Octohedron under that. By then moving the GFX up a bit, we move the model up as well. That way, any other graphical objects we have will all be vertically aligned, and our Octohedron can spin without any side effects.
+    Therefore, we create a GameObject specifically for the player's graphical representation, and put the Octohedron under that. By then moving the GFX up a bit, we move the model up as well. That way, any other graphical objects we have will all be vertically aligned, and our Octohedron can spin without any side effects.
 
-Further, the position of the top-most GameObject in any object is often considered that collective object's 'True Position'. It is also often a useful notion to have an object's position be somewhere along the ground below its center of mass.
+    Further, the position of the top-most GameObject in any group is often considered that collective object's 'True Position'. It is also often a useful notion and standard to have an object's position be at ground-level directly below its center of mass.
 
-Our player is represented by a the Octohedron, but we would like its position to be described as somewhere along the X-Z plane, and the Y position is always 0 for simplicity's sake. So we keep the root GameObject at Y=0, but move the graphical representation of the player up a bit.
+    Our player is represented by a the Octohedron, but we would like its position to be described as somewhere along the X-Z plane, and the Y position is always 0 for simplicity's sake. So we keep the root GameObject at Y=0, but move the graphical representation of the player up a bit.
 
-The benefits of this are a bit too difficult to explain out of context, but it will make more sense as we develop our player object (and as you make some inevitable mistakes in your own projects!). The way your organize and object's sub-hierarchy is very important when you start creating more complex things!
+    The benefits of this are a bit difficult to conceptualize out of context, but it will make more sense as we develop our player object (and as you make some inevitable mistakes in your own projects!). The way you organize and object's sub-hierarchy is very important when you start creating more complex things!
 
 ### 3) Apply Materials
 
@@ -149,22 +151,25 @@ However, the *movement* of our player is not going to be physically simulated- i
 Select the *Player* GameObject and, using the Inspector, do `Add Component > Rigidbody` by using the button at the bottom of the Inspector. Rigidbodies also need a collider component *somewhere* on the same GameObject or a GameObject in its children.
 
 #### Add a Collider
-Colliders dictate the physical space an object takes up within the Physics system, and are used for detecting collisions. Question is, which GameObject should we put our collider on?
+???+ question "Where Does Our Collider Go?"
+    Colliders dictate the physical space an object takes up within the Physics system, and are used for detecting collisions. Question is, which GameObject should we put our collider on?
 
-The obvious answer is on the Octohedron model. After all, the player's collision ought to most closely resemble the player's graphical representation, right? That is reasonable, but in the future, we may want our player's model to rotate or move up and down for special effects, and **we don't want to be radically changing the player's collision boundaries when we do that**.
+    The obvious answer is on the Octohedron model. After all, the player's collision ought to most closely resemble the player's graphical representation, right? That is reasonable, but in the future, we may want our player's model to rotate or move up and down for special effects, and **we don't want to be radically changing the player's collision boundaries when we do that**.
 
-Imagine if our player was trying to navigate a very narrow corridor, and all of a sudden one of our graphical effects caused the Octohedron to spin sideways, **which then collided them with a wall and forced them to fail**.
+    Imagine if our player was trying to navigate a very narrow corridor, and all of a sudden one of our graphical effects caused the Octohedron to spin sideways, **which then collided them with a wall and forced them to fail**.
 
-No, we want to have collision without locking ourselves out of being able transform the player model. Realistically, we only want to designate an abstract space *in the middle* of the player which is used for collision detection- a 'hitbox' so to speak. **Therefore, let's attach our collider to the *Player* root object**. That way, we don't have to worry about any changes to our graphics objects affecting our collisions.
+    No, we want to have collision without locking ourselves out of being able transform the player model. Realistically, we only want to designate an abstract space *in the middle* of the player which is used for collision detection- a 'hitbox' so to speak. **Therefore, let's attach our collider to the *Player* root object**. That way, we don't have to worry about any changes to our graphics objects affecting our collisions.
 
-Theory aside, select the *Player* and do `Add Component > Box Collider` from the Inspector. You should now see a green box in the scene for the player. Using the settings on the Box Collider component, we can adjust its size and center to vaguely wrap it around the Octohedron's normal position. The 'Edit Collider' toggle button allows you to use Gizmos to adjust it in the Scene view, which is highly recommended.
+Select the *Player* and do `Add Component > Box Collider` from the Inspector. You should now see a green box in the scene for the player. Using the settings on the Box Collider component, we can adjust its size and center to vaguely wrap it around the Octohedron's normal position. The 'Edit Collider' toggle button allows you to use Gizmos to adjust it in the Scene view, which is highly recommended.
 
 Position and size your box collider to the approximate size of the Octohedron, and drag the bottom side down a bit so it can collide with the walls better.
 
-**Protip: make the X & Z size of the collider slightly *smaller* than the actual Octohedron**. As it turns out, your game will often feel better if the player's collision is a tad smaller than it seems it should be. Perfectly accurate colliders make it feel like you are "getting caught" on things all the time, and smaller colliders let players feel like they are narrowly dodging around things all the time.
+???+ tip "Collider Size"
+    **Protip: make the X & Z size of the collider slightly *smaller* than the actual Octohedron**. As it turns out, your game will often feel better if the player's collision is a tad smaller than it seems it should be. Perfectly accurate colliders make it feel like you are "getting caught" on things all the time, and smaller colliders let players feel like they are narrowly dodging around things all the time.
 
 ![Player collider and rigidbody settings](./res/2-1-player-collider.PNG)
-Here is what my collider looks like. Notice it extends a bit lower so we can get good contact with the walls, and it doesn't fuller enclose the actual model. You can copy my `Center` and `Size` settings if you are having difficulty getting yours right.
+
+Here is my collider's configuration. Notice it extends a bit lower so we can get good contact with the walls, and it doesn't fuller enclose the actual model. You can copy my `Center` and `Size` settings if you are having difficulty getting yours right.
 
 #### Rigidbody Configuration
 
@@ -205,17 +210,17 @@ public class PlayerMovement : MonoBehaviour
 }
 ```
 
-This script is pretty simple. In the Awake method (called when the object is first loaded in, but before any update calls), we get a reference to the rigidbody component attached to the same GameObject as the script- the one for our player.
+???+ abstract
+    This script is pretty simple. In the Awake method (called when the object is first loaded in, but before any update calls), we get a reference to the rigidbody component attached to the same GameObject as the script- the one for our player.
 
+    In the FixedUpdate call, which occurs whenever a physics update occurs, we will take our current position, increment it by one in the z-axis, and move our rigidbody to the incremented position. Note that for the most part, any logic which involves calls or accesses to rigidbody components should always occur within the FixedUpdate call so that it can properly interact with other physics objects!
 
-In the FixedUpdate call, which occurs whenever a physics update occurs, we will take our current position, increment it by one in the z-axis, and move our rigidbody to the incremented position. Note that for the most part, any logic which involves calls or accesses to rigidbody components should always occur within the FixedUpdate call so that it can properly interact with other physics objects!
-
-**Did you notice the `RequireComponent` attribute** above the class definition? When you specify required components on a MonoBehavior class, it tells Unity that your script should **always** be paired with a component of that type when attached to a GameObject. This prevents our call on line 10 from ever returning null and crashing our script.
+    **Did you notice the `RequireComponent` attribute** above the class definition? When you specify required components on a MonoBehavior class, it tells Unity that your script should **always** be paired with a component of that type when attached to a GameObject. This prevents our call on line 10 from ever returning null and crashing our script.
 
 Save the script. Back in the editor, select the *Player* and `Add Component > PlayerMovement`, then enter Play Mode, you will notice your player zoom off!
 
 ### 3) Bring the Camera With!
-Obviously, we want to have our camera keep place with the player!
+Obviously, we want to have our camera keep pace with the player!
 
 #### A Bad Solution
 An easy but bad way to accomplish this would be to just make the *Main Camera* a child of the *Player* GameObject, then offset it to a nice angle. However, this has two rather cumbersome side effects:
@@ -255,16 +260,25 @@ public class CameraRig : MonoBehaviour
 }
 ```
 
-Again, fairly simple. Note that the `SerializeField` attribute is being used to allow private-scoped variables to show up in the inspector- a useful trick if you want to populate script parameters without exposing their scope.
+???+ abstract
+    Again, fairly simple. Note that the `SerializeField` attribute is being used to allow private-scoped variables to show up in the inspector- a useful trick if you want to populate script parameters without exposing their scope.
 
-The option to set our `_followOffset` in the awake method is nice, since it lets us use the Scene view to pick a nice camera angle.
+    The option to set our `_followOffset` in the awake method is nice, since it lets us use the Scene view to pick a nice camera angle.
 
-Note that we use the **`LateUpdate`** method to change our camera's position. The `LateUpdate` tick always occurs after that of `Update` and `FixedUpdate` (If one occurs that frame), but just before the frame is written to the screen. This makes it a good time to reposition our camera so it has the most up-to-date position.
+    Note that we use the **`LateUpdate`** method to change our camera's position. The `LateUpdate` tick always occurs after that of `Update` and `FixedUpdate` (If one occurs that frame), but just before the frame is written to the screen. This makes it a good time to reposition our camera so it has the most up-to-date position.
 
-If you changed the position of the camera in the regular `Update` tick, it is possible that something else could change the Player's position before the screen write, which would result is small inaccuracies. Small inaccuracies on the **player's camera** produce very ugly jitter, so try to avoid them.
+???+ info 
+    If our script changed the position of the camera in the regular `Update` tick, it is possible that something else could change the Player's position before the screen write, which would result is small inaccuracies. Small inaccuracies on the **player's camera** produce very ugly jitter, so try to avoid them.
 
 #### Apply the New Script
 We will not actually apply this script directly to the camera. Instead, we will create a *Camera Rig* object, put the script on it, then make the *Main Camera* a child of that. You can do this easily by right-clicking the *Main Camera* and picking `Create Empty Parent`, then add the new script to the object.
+
+???+ warning "Inspector-Assigned Properties"
+    Whenever we create a public or *SerializedField* member in one of our scripts and it is not assigned to through the code, we are usually expecting to manually assign something to that property *per instance* using the Inspector.
+
+    In this circumstance, we want to drag-and-drop the *Player* GameObject (and thusly, its transform) into the `Follow Target` property to specify what the camera will follow.
+
+    Forgetting to assign your properties can lead to null reference exceptions!
 
 Ensure that our `Use Awake Offset` flag is on, and position the Camera Rig at a nice position to view the Player and the upcoming road. You will want to rotate the camera on the X-axis a bit to get a downward view- it is probably better to apply that rotation to the *Main Camera* itself.
 
@@ -332,13 +346,14 @@ public class PlayerMovement : MonoBehaviour
 }
 ```
 
-Whenever the *PlayerInput* component on our *Player* GameObject sees receives an event from the player performing an input, it will broadcast a message to any script on its GameObject. By giving our `PlayerMovement` script a method for `void OnMove(InputValue)`, we can tell our script to react to the player updating their movement inputs.
+???+ abstract
+    Whenever the *PlayerInput* component on our *Player* GameObject sees receives an event from the player performing an input, it will broadcast a message to any script on its GameObject. By giving our `PlayerMovement` script a method for `void OnMove(InputValue)`, we can tell our script to react to the player updating their movement inputs.
 
-In this circumstance, we just want to read in the value of the player's horizontal input to a stored variable. Note that we need to add `using UnityEngine.InputSystem` for the `InputValue` object.
+    In this circumstance, we just want to read in the value of the player's horizontal input to a stored variable. Note that we need to add `using UnityEngine.InputSystem` for the `InputValue` object.
 
-We also slightly change the way that we calculate the new position. Instead, we compute an *offset* which is then added to the rigidbody's position in the `MovePosition` call. This will be a better-expressed approach for when we add speed control.
+    We also slightly change the way that we calculate the new position. Instead, we compute an *offset* which is then added to the rigidbody's position in the `MovePosition` call. This will be a better-expressed approach for when we add speed control.
 
-`_strafeInput`, then, will be equal to -1 if the player inputs left, 1 if right, and 0 when nothing is held. From there, we add their input to the `newPosition.x` in order to apply some horizontal velocity for each frame!
+    `_strafeInput`, then, will be equal to -1 if the player inputs left, 1 if right, and 0 when nothing is held. From there, we add their input to the `newPosition.x` in order to apply some horizontal velocity for each frame!
 
 #### Speed Adjustment
 Let's consider for a second- how *actually* fast is our player moving? Well, all of our logic for moving the player forward is being incremented in the `FixedUpdate` method. As the name suggests, this method is called at very exact, fixed intervals: exactly every 0.02 seconds by default, or 50 times a second. 
@@ -455,13 +470,14 @@ public class PointPickUp : MonoBehaviour
 }
 ```
 
-The `OnTriggerEnter` method is called during the `FixedUpdate` call when something enters the trigger collider *on the same GameObject* as the script. The `Collider other` is a reference to the collider component which invoked the collision.
+???+ abstract
+    The `OnTriggerEnter` method is called during the `FixedUpdate` call when something enters the trigger collider *on the same GameObject* as the script. The `Collider other` is a reference to the collider component which invoked the collision.
 
-From the collider, we can query its GameObject for other components by using `GetComponent<type>`, so we check to see if the incoming object has a `PlayerMissiles` component, and run a routine for collecting the point if it does.
+    From the collider, we can query its GameObject for other components by using `GetComponent<type>`, so we check to see if the incoming object has a `PlayerMissiles` component, and run a routine for collecting the point if it does.
 
-It is very important that we verify the incoming collision *does actually contain* a `PlayerMissiles` component. `GetComponent` can return `NULL` if no component of the specified type is found on `other`, which would then trigger a `NullReferenceException` if we tried to invoke methods on it! Remember that *any* GameObject with a collider on it could invoke the `OnTriggerEnter` method by simply moving into its bounds- we want to filter to only those with `PlayerMissiles` scripts (one, in our case- the Player!).
+    It is very important that we verify the incoming collision *does actually contain* a `PlayerMissiles` component. `GetComponent` can return `NULL` if no component of the specified type is found on `other`, which would then trigger a `NullReferenceException` if we tried to invoke methods on it! Remember that *any* GameObject with a collider on it could invoke the `OnTriggerEnter` method by simply moving into its bounds- we want to filter to only those with `PlayerMissiles` scripts (one, in our case- the Player!).
 
-Since our `PlayerMissiles` script does not yet have a method for receiving points, we will write ourselves a note to implement that later.
+    Since our `PlayerMissiles` script does not yet have a method for receiving points, we will write ourselves a note to implement that later.
 
 #### Prefabs
 We are going to want to have multiple copies of these pick-ups, but we want them to all generally operate the same way with similar parameters. This makes them a good candidate to turn into a **prefab**.
@@ -474,7 +490,10 @@ In your Project window, `Create > Folder`, name the folder *Prefabs*, and open i
 
 Now, try creating some new instances by drag-and-dropping from the Project window or `Ctrl+D` on the existing instance, and arrange the pick ups in a line.
 
-***IMPORTANT***: When you want to make a change to a prefab that effects **all** instances, you should double-click it in the Project window to open the prefab editor. This will properly propagate all changes to any instances.
+???+ danger "Prefab Editor"
+    ***IMPORTANT***: When you want to make a change to a prefab that effects **all** instances, you should double-click it in the Project window to open the prefab editor. This will properly propagate all changes to any instances.
+
+    If you do want a change on an *instance* of a prefab to propagate to all other instances, you can use the *overrides* drop down in the Inspector to do so, but this may have unexpected behavior. Therefore, it is always best to use the prefab editor to edit prefabs.
 
 ### 3) Spruce Up the Pick Ups
 Now normally, it is not a great idea to invest a bunch of time polishing individual game elements when you are still prototyping. We could, for instance, decide later that we do not actually want to have these pick ups, and then all that effort would go down the drain. Or worse: we could become too attached to something because we have spent too much time refining it and be resistant to changing it out for something better.
@@ -536,11 +555,12 @@ public class PointPickUp : MonoBehaviour
 }
 ```
 
-When the `PlayerMissiles` component is detected, we keep track of it in a class member. Whenever that class member `_targetPlayerMissiles` is not null, we will move the position of the pick up closer to the player's position by an accelerating velocity per frame. Lastly, when the distances are lower than some set distance, we then trigger the collection.
+???+ abstract
+    When the `PlayerMissiles` component is detected, we keep track of it in a class member. Whenever that class member `_targetPlayerMissiles` is not null, we will move the position of the pick up closer to the player's position by an accelerating velocity per frame. Lastly, when the distances are lower than some set distance, we then trigger the collection.
 
-Note that we multiply the acceleration and the velocity by `Time.deltaTime`. This number is equal to the number of seconds between the last frame and this frame, which has the effect of converting the accleration / velocity to a per-second quantity instead of a per-frame quantity.
+    Note that we multiply the acceleration and the velocity by `Time.deltaTime`. This number is equal to the number of seconds between the last frame and this frame, which has the effect of converting the accleration / velocity to a per-second quantity instead of a per-frame quantity.
 
-Note that increasing the velocity each frame gives our pick up some more character by introducing a *ramp up* to the collection. It also guarantees that the pick up will eventually catch up to the *Player* even if they are initially faster.
+    Note that increasing the velocity each frame gives our pick up some more character by introducing a *ramp up* to the collection. It also guarantees that the pick up will eventually catch up to the *Player* even if they are initially faster.
 
 Go in Play Mode and give it a try! You can tweak the `_flyAcceleration` to get some different results. You may want to push back or increase the FOV on your camera to be able to observe the movement better.
 
@@ -621,13 +641,14 @@ public class PointPickUp : MonoBehaviour
 }
 ```
 
-If you subtract a vector `position` from the vector `target`, the result will be a vector which would move `position` to `target`. If you then *normalize* that vector, you will get the **direction** from `position` to `target`. Commit this to memory, it is a very important technique!
+???+ abstract
+    If you subtract a vector `position` from the vector `target`, the result will be a vector which would move `position` to `target`. If you then *normalize* that vector, you will get the **direction** from `position` to `target`. Commit this to memory, it is a very important technique!
 
-When the trigger initially occurs, we will store the initial direction in `_velocityDirection`.
+    When the trigger initially occurs, we will store the initial direction in `_velocityDirection`.
 
-Then, per-update, we will slowly move that initial direction towards the correct direction needed to intercept the *Player* as it moves along. All the while, we move the pick up along the ever-correcting direction vector by the accelerating speed.
+    Then, per-update, we will slowly move that initial direction towards the correct direction needed to intercept the *Player* as it moves along. All the while, we move the pick up along the ever-correcting direction vector by the accelerating speed.
 
-Additionally, since our player's position is at y=0 and our points are above the ground, our pick-up may try to go below the ground. If it does, we will fix this issue by simply making the y component of our `_velocityDirection` positive. This also gives us an interesting *bounce* effect.
+    Additionally, since our player's position is at y=0 and our points are above the ground, our pick-up may try to go below the ground. If it does, we will fix this issue by simply making the y component of our `_velocityDirection` positive. This also gives us an interesting *bounce* effect.
 
 Do not worry if this is a bit advanced for you right now. As long as the you get the general idea, you will learn how to manipulate vectors with practice.
 
@@ -689,7 +710,7 @@ Since our pick up script already stores a reference to the `PlayerMissiles` clas
 
 I have not mentioned this yet, but we allowed each pick up to have it's point total be a property changeable in the Inspector. This allows us to make pick ups which are worth more points. Lets go ahead and make a pick up which is worth **three** points.
 
-Select one of your pick ups in your scene, `Ctrl+D` to duplicate it, move it, and change its `Point Value` property to `3`. Also create and apply a new material to color it differently.
+Select one of your pick ups in your scene, ++ctrl+d++ to duplicate it, move it, and change its `Point Value` property to `3`. Also create and apply a new material to color it differently.
 
 Now, drag it down to your Prefabs folder again and you will get a new prompt, asking if you would like to make this an *original prefab* or a *variant*. A variant prefab functions similarly to *class inheritance*, it defines the variant as a **subtype** of a base prefab by providing a few overrides that make it distinct. The variant option makes perfect sense here, so use that!
 
@@ -768,19 +789,20 @@ public class PlayerMissiles : MonoBehaviour
 }
 ```
 
-This script gets pretty big, but that is because we are also trying to work some better structure here by using functions and some documentation.
+???+ abstract
+    This script gets pretty big, but that is because we are also trying to work some better structure here by using functions and some documentation.
 
-First, we create a reference to our missile prefab and the transform we would like to place them under. These will both be populated using the Inspector. We will discuss `_missileSpawnRadius` in a second.
+    First, we create a reference to our missile prefab and the transform we would like to place them under. These will both be populated using the Inspector. We will discuss `_missileSpawnRadius` in a second.
 
-The `_missileList` is a collection of any active missiles we have spawned. Note that even though it is a collection of `Missile` objects, the objects have an implied GameObject attached to them since they are a *MonoBehavior*, and storing them as the `Missile` component keeps us from having to constantly use `GetComponent`.
+    The `_missileList` is a collection of any active missiles we have spawned. Note that even though it is a collection of `Missile` objects, the objects have an implied GameObject attached to them since they are a *MonoBehavior*, and storing them as the `Missile` component keeps us from having to constantly use `GetComponent`.
 
-The `CreateMissile` method uses the `Instantiate` method to create a new instance of our `_missilePrefab` as a child of `_missileStore`. We then also generate a random offset for its local position so that all of the missiles are not spawned right on top of each other (Note that the local position is where it lies relative to its parent, similar to when you change the position of children in the Hierarchy). The `Missile` object of the newly created instance is added to our list.
+    The `CreateMissile` method uses the `Instantiate` method to create a new instance of our `_missilePrefab` as a child of `_missileStore`. We then also generate a random offset for its local position so that all of the missiles are not spawned right on top of each other (Note that the local position is where it lies relative to its parent, similar to when you change the position of children in the Hierarchy). The `Missile` object of the newly created instance is added to our list.
 
-The `SyncMissilesToPoints` method will determine how many missiles need to make the count in the list one-to-one with the `_missilePoints`. It needs to be called whenever our point count is changed, so we make a call to it in `AddPoints`.
+    The `SyncMissilesToPoints` method will determine how many missiles need to make the count in the list one-to-one with the `_missilePoints`. It needs to be called whenever our point count is changed, so we make a call to it in `AddPoints`.
 
-As a nice touch, we also introduce some C# XML documentation- something that is very worthwhile as your project grows and gets larger. You will want to be able to keep notes on what complex functions and scripts do. The XML documentation also adds intellisense information to anything you put it on- hover your mouse over `CreateMissile()` in your editor and you'll see!
+    As a nice touch, we also introduce some C# XML documentation- something that is very worthwhile as your project grows and gets larger. You will want to be able to keep notes on what complex functions and scripts do. The XML documentation also adds intellisense information to anything you put it on- hover your mouse over `CreateMissile()` in your editor and you'll see!
 
-[Learn more about C# XML documentation](https://www.oreilly.com/library/view/c-in-a/0596001819/ch04s10.html)
+    [Learn more about C# XML documentation](https://www.oreilly.com/library/view/c-in-a/0596001819/ch04s10.html)
 
 On the Inspector for the *Player*, you will need to set the `Missile Prefab` and `Missile Store` properties or else you will get a null reference exception. Drag-and-drop from the Project window *Prefab* folder to set the prefab and drag-and-drop the *Missile Store* GameObject to get the transform.
 
@@ -805,7 +827,8 @@ private void Update()
 }
 ```
 
-The Y-Axis rotation applied per frame gives us a Z-X plane rotation of the missile store, which gives us our orbiting motion. Multiplying the `_storeSpinSpeed` by `Time.deltaTime` turns it into a degrees-per-second speed instead of a degrees-per-frame speed.
+???+ abstract
+    The Y-Axis rotation applied per frame gives us a Z-X plane rotation of the missile store, which gives us our orbiting motion. Multiplying the `_storeSpinSpeed` by `Time.deltaTime` turns it into a degrees-per-second speed instead of a degrees-per-frame speed.
 
 Now, if you tried this in Play Mode, you likely noticed a small issue...
 
@@ -825,7 +848,8 @@ public class Missile : MonoBehaviour
 }
 ```
 
-Each frame, set the **global** rotation of the missile to be a rotation which faces down the positive Z axis.
+???+ abstract
+    Each frame, set the **global** rotation of the missile to be a rotation which faces down the positive Z axis.
 
 #### Missile Spin
 
@@ -856,11 +880,12 @@ public class Missile : MonoBehaviour
 }
 ```
 
-Note that the `Transform.Rotate(Vector3)` method typically applies a rotation *additive to* the existing one, but since our assignment on line 17 overrides the previous rotation, the spin needs to be stored in a variable.
+???+ abstract
+    Note that the `Transform.Rotate(Vector3)` method typically applies a rotation *additive to* the existing one, but since our assignment on line 17 overrides the previous rotation, the spin needs to be stored in a variable.
 
-We also so `Time.deltaTime` being used in a slightly different way here. If you increment a variable by `Time.deltaTime` each frame, that variable effectly acts as a stopwatch by accumulating the number of real-world seconds.
+    We also so `Time.deltaTime` being used in a slightly different way here. If you increment a variable by `Time.deltaTime` each frame, that variable effectly acts as a stopwatch by accumulating the number of real-world seconds.
 
-Lastly, we also apply a random starting angle to the missile so that missiles added in the same frame are generally not in phase with each other, which may looks weirdly artifical.
+    Lastly, we also apply a random starting angle to the missile so that missiles added in the same frame are generally not in phase with each other, which may looks weirdly artifical.
 
 ---
 
@@ -883,14 +908,14 @@ When the player approaches a wall, they will automatically fire as many missiles
 ### 1) Kill Wall Prefab
 
 #### Road Extension
-Actually, before we make our first Kill Wall, go ahead and extend your road if you haven't already. Use `Ctrl+D` to duplicate the *Road* group and move it down the Z-Axis such that it is seamless with the original road.
+Actually, before we make our first Kill Wall, go ahead and extend your road if you haven't already. Use ++ctrl+d++ to duplicate the *Road* group and move it down the Z-Axis such that it is seamless with the original road.
 
 #### Wall
 As usual, we will create an empty GameObject that will house everything related to the Kill Wall- name the new empty GameObject *Kill Wall*.
 
 To the *Kill Wall* object, add a *Cube* 3D Object as a child of it and scale it so that it spans the entire road and is much taller. Giving it some thickness will help with collision detection as well. Go ahead and make a material to color the cube as well- red is nice and menacing!
 
-We actually want the collider of the wall to be on the *Kill Wall* GameObject, not the *Cube*, so delete the *Cube* one and add an appropriately sized `BoxCollider` to the *Kill Wall*. (We do this because colliders will only report collisions to scripts immediately on the same GameObject, not their parents.
+We actually want the collider of the wall to be on the *Kill Wall* GameObject, not the *Cube*, so delete the *Cube* one and add an appropriately sized `BoxCollider` to the *Kill Wall*. We do this because colliders will only report collisions to scripts immediately on the same GameObject, not their parents.
 
 Create a new script `KillWall.cs` and add it to the *Kill Wall*, we will implement it later.
 
@@ -944,7 +969,8 @@ public class KillWall : MonoBehaviour
     }
 }
 ```
-Once again, we make sure that we check that the opposing collider is *actually* a `Player` class by comparing it against `null`, which avoids a possible null reference exception should something else incidentally collide with the wall.
+???+ abstract
+    Once again, we make sure that we check that the opposing collider is *actually* a `Player` class by comparing it against `null`, which avoids a possible null reference exception should something else incidentally collide with the wall.
 
 ### 3) Missile Launching
 In a similar vein, our `ShootTrigger` script shoud detect a `Player` entering its trigger volume and tell the player to launch as many missiles as necessary to destroy the `KillWall` it is attached to. This will take a bit more work, though!
@@ -994,7 +1020,8 @@ public class KillWall : MonoBehaviour
 }
 ```
 
-Note at the bottom that we create a *Property* called `HitPoints` which exposes `_hitPoints` to public reading without allowing it to be publically writable.
+???+ abstract
+    Note at the bottom that we create a *Property* called `HitPoints` which exposes `_hitPoints` to public reading without allowing it to be publically writable.
 
 Next, we will create a method on our `Missile` script which allows it to fire itself at a provided `KillWall` object.
 
@@ -1060,9 +1087,10 @@ public class Missile : MonoBehaviour
 }
 ```
 
-Note that we moved the original `Update` behavior to `DoIdleAnimation`, which is sidelined one the missile has a valid target. This actually works pretty similarly to our `PointPickUp`'s chase behavior.
+???+ abstract
+    Note that we moved the original `Update` behavior to `DoIdleAnimation`, which is sidelined one the missile has a valid target. This actually works pretty similarly to our `PointPickUp`'s chase behavior.
 
-Also note that we unparent the missile from the *Player* when we fire, so its position is not affected by the player's movement any longer.
+    Also note that we unparent the missile from the *Player* when we fire, so its position is not affected by the player's movement any longer.
 
 Next, we need to change the `PlayerMissiles` script to have a public method to dispatch exactly enough missiles to destroy a given `KillWall`:
 
@@ -1093,11 +1121,13 @@ public void FireMissilesAtTarget(KillWall killWall)
 ...
 
 ```
-We iterate through each missile in the `_missileList` from back to front, firing them at the wall until the cumulative damage of the fired missiles is enough to kill the wall or we run out.
 
-We go from back to front because it is generally more performant to unshift items from a container from the back than the front.
+???+ abstract
+    We iterate through each missile in the `_missileList` from back to front, firing them at the wall until the cumulative damage of the fired missiles is enough to kill the wall or we run out.
 
-It is also important to remember to update our number of `_missilePoints` after firing off a missile. The number of points a missile was worth is its `AttackDamage`, though that will always be `1` for now.
+    We go from back to front because it is generally more performant to unshift items from a container at the back than the front.
+
+    It is also important to remember to update our number of `_missilePoints` after firing off a missile. The number of points a missile was worth is its `AttackDamage`, though that will always be `1` for now.
 
 Lastly, we just need to update the `ShootTrigger` to know which `KillWall` it is attached to and tell the `PlayerMissiles` to `FireMissilesAtTarget` when it enters the trigger volume.
 
@@ -1150,7 +1180,10 @@ Now we can position our canvas, which is wildly too large. Reset the `Rect Trans
 
 You can then add a `UI > Panel` object to the *canvas*, which will help our text stand out from the *Kill Wall*. It looks a little weird and pixelated- set the `Pixels Per Unit Multiplier` on the `Image` component to `5` and it will look correct.
 
-Now, to the *Panel*, add a `UI > Text - TextMeshPro`. You will need to do a series of things to get it to fit correctly within the *Panel*. Note that the first time you add a `Text - TextMeshPro` object, you will get a pop up saying you need to import the essentials package, which must do to get a working font. You do not need to import the extras.
+Now, to the *Panel*, add a `UI > Text - TextMeshPro`. You will need to do a series of things to get it to fit correctly within the *Panel*. 
+
+???+ note "Text Mesh Pro"
+    Note that the first time you add a `Text - TextMeshPro` object, you will get a pop up saying you need to import the essentials package, which must do to get a working font. You do not need to import the extras.
 
 1. In the top-left anchor box, hold `ALT+Shift` and click on the bottom-right option to set the element to stretch across the entire *Panel*.
 2. Check the `Auto-Size` property.
@@ -1192,17 +1225,18 @@ public class KillWall : MonoBehaviour
 
 ```
 
-*Actions* allow other scripts to 'subscribe' to them and register some kind of response whenever the action is invoked. In this example, our `KillWall` will invoke the `OnHitPointsChanged` method, transmitting the number of HitPoints in a signal to any scripts which are subscribed to the Action.
+???+ abstract
+    *Actions* allow other scripts to 'subscribe' to them and register some kind of response whenever the action is invoked. In this example, our `KillWall` will invoke the `OnHitPointsChanged` method, transmitting the number of HitPoints in a signal to any scripts which are subscribed to the Action.
 
-Our UI object can subscribe to the action, read the int trasmitted with the invocation, and update the UI accordingly.
+    Our UI object can subscribe to the action, read the int trasmitted with the invocation, and update the UI accordingly.
 
-This is *significantly* more efficient than having the UI constantly check the value of the the `KillWall`'s HitPoints each frame and updating the text accordingly. Actions are great for these circumstances where things only need to periodically respond in reaction to an event.
+    This is *significantly* more efficient than having the UI constantly check the value of the the `KillWall`'s HitPoints each frame and updating the text accordingly. Actions are great for these circumstances where things only need to periodically respond in reaction to an event.
 
-Also note the strange notation of the `?` operator. Actions are a *nullable* type, which means that they can have a valid value *or* be `null`. Using the `?` operator with a *nullable* type will only execute the instruction if the given *nullable* is non-null.
+    Also note the strange notation of the `?` operator. Actions are a *nullable* type, which means that they can have a valid value *or* be `null`. Using the `?` operator with a *nullable* type will only execute the instruction if the given *nullable* is non-null.
 
-[Learn more about events, delegates, and actions](https://gamedevbeginner.com/events-and-delegates-in-unity/)
+    [Learn more about events, delegates, and actions](https://gamedevbeginner.com/events-and-delegates-in-unity/)
 
-[Learn more about nullable types](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/nullable-value-types)
+    [Learn more about nullable types](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/nullable-value-types)
 
 Create a new script `KillWallUI` and attach it to the *Text(TMP)* object.
 
@@ -1240,9 +1274,10 @@ public class KillWallUI : MonoBehaviour
 }
 ```
 
-To register a function to an Action, we `+=` a function with an appropriate *parameter list* (that being one `int` type) to the Action. Whenever you register to an Action, **must also deregister the function** should the script ever be destroyed or be disabled. This is why this behaviour is done on every enable or activate (which also trigger on awake and on destroy respectively).
+???+ abstract
+    To register a function to an Action, we `+=` a function with an appropriate *parameter list* (that being one `int` type) to the Action. Whenever you register to an Action, **must also deregister the function** should the script ever be destroyed or be disabled. This is why this behaviour is done on every enable or activate (which also trigger on awake and on destroy respectively).
 
-Changing the text is simple as can be: Just set the `text` property to a string of the transmitted integer.
+    Changing the text is simple as can be: Just set the `text` property to a string of the transmitted integer.
 
 Do not forget to set the `_killWall` property of the `KillWallUI` script instance to that on the *Kill Wall* object!
 
@@ -1310,12 +1345,12 @@ public class PlayerMissiles : MonoBehaviour
     public int MissilePoints {get => _missilePoints; }
 }
 ```
+???+ abstract
+    We invoke the `OnMissilesChanged` action whenever we gain missile points or fire a missile.
 
-We invoke the `OnMissilesChanged` action whenever we gain missile points or fire a missile.
+    Note that we must add `using System;` to be able to use Actions. However, both the `UnityEngine` and `System` namespace introduce their own, identically-named `Random` class, which causes an ambigious call error when we make a `Random` call later in the file.
 
-Note that we must add `using System;` to be able to use Actions. However, both the `UnityEngine` and `System` namespace introduce their own, identically-named `Random` class, which causes an ambigious call error when we make a `Random` call later in the file.
-
-To fix this, the code on line 6 specifies that `Random` *always* refers to the `UnityEngine` implementation.
+    To fix this, the code on line 6 specifies that `Random` *always* refers to the `UnityEngine` implementation.
 
 Now create another script `MissileUI` and attach it to the *Missile UI -> Panel -> Text (TMP)* GameObject.
 
@@ -1444,7 +1479,8 @@ private void SyncMissilesToPoints()
 ...
 ```
 
-Note that since it is possible for `missileToCreate` to be negative now, `SyncMissilesToPoints` was upgraded to have separate behavior for when missiles need to be removed. Similarly to firing missiles, we remove missiles from the *back* of the list (for efficiency purposes) by de-listing them and calling the `DestroyMissile` method we created.
+???+ abstract
+    Note that since it is possible for `missileToCreate` to be negative now, `SyncMissilesToPoints` was upgraded to have separate behavior for when missiles need to be removed. Similarly to firing missiles, we remove missiles from the *back* of the list (for efficiency purposes) by de-listing them and calling the `DestroyMissile` method we created.
 
 ---
 
@@ -1513,21 +1549,20 @@ public class HazardZone : MonoBehaviour
 }
 ```
 
-We start by defining a `_ticksPerSecond` field which describes how many times the player should be damaged per second that they remain in the trigger volume. This is then internally converted to a `_tickInterval` value (by taking `1 / _ticksPerSecond`) to be equal to the number of seconds it takes to do one tick of damage.
+???+ abstract
+    We start by defining a `_ticksPerSecond` field which describes how many times the player should be damaged per second that they remain in the trigger volume. This is then internally converted to a `_tickInterval` value (by taking `1 / _ticksPerSecond`) to be equal to the number of seconds it takes to do one tick of damage.
 
-We do this because it is easier to understand the damage rate as a number of ticks per second getting larger as it becomes more threatening, rather than an interval getting smaller as it becomes more dangerous (which is what the script needs to know to do the damage).
+    We do this because it is easier to understand the damage rate as a number of ticks per second getting larger as it becomes more threatening, rather than an interval getting smaller as it becomes more dangerous (which is what the script needs to know to do the damage).
 
-When a `PlayerMissiles` object enters the volume, it is tracked and `_damagingPlayer` is set to true to allow our damage logic to occur per-frame. We also pre-set the tick timer `_timeSinceLastTick` to 75% so they player has a very small grace period before they take their first instance of contact damage with the zone.
+    When a `PlayerMissiles` object enters the volume, it is tracked and `_damagingPlayer` is set to true to allow our damage logic to occur per-frame. We also pre-set the tick timer `_timeSinceLastTick` to 75% so they player has a very small grace period before they take their first instance of contact damage with the zone.
 
-Per update, we accumulate time into `_timeSinceLastTick` using `Time.deltaTime`, and if it is greater than the interval, the player is damaged and the timer resets.
+    Per update, we accumulate time into `_timeSinceLastTick` using `Time.deltaTime`, and if it is greater than the interval, the player is damaged and the timer resets.
 
-When the `PlayerMissiles` exits the volume, we untrack the object and stop damaging the player.
+    When the `PlayerMissiles` exits the volume, we untrack the object and stop damaging the player.
 
 ---
 
 Make your Hazard Zone a bit longer and push back your *Kill Wall* a bit (adding another road segment if necessary). I personally bumped up the `Ticks Per Second` property to `2`. Test it out in Play Mode!
-
-Note that our hazards cannot directly destroy the player, but since we plan on having *Kill Walls* be reoccuring every so often, losing or missing too many missile points will result in failure.
 
 ### 3) Moving Hazard
 
@@ -1578,9 +1613,10 @@ public class XPingPong : MonoBehaviour
 }
 ```
 
-We define a x minimum and maximum for the transform to translate between. That range is then converted to two positions `_maximumPosition` and `_minimumPosition`.
+???+ abstract
+    We define a x minimum and maximum for the transform to translate between. That range is then converted to two positions `_maximumPosition` and `_minimumPosition`.
 
-Per Update, we will move towards either the `_maximumPosition` or `_minimumPosition`, swapping between the two as we reach either of them. Pretty simple!
+    Per Update, we will move towards either the `_maximumPosition` or `_minimumPosition`, swapping between the two as we reach either of them. Pretty simple!
 
 We can now add this script to *any* object we want to ping pong on our road. You could even add it to your *Point PickUps*, but you would need to create a third intermediary script to disable the ping-pong behavior when the pick up starts flying at the *Player*, which may be a good exercise for your own time.
 
@@ -1629,15 +1665,15 @@ We ought to extend our road out a bunch and add more content to it in order to s
 
 #### Hierarchy Organization
 
-Before we start, create a new empty GameObject *Environment* and make reset its `Transform` component. We will place almost every physical GameObject that composes our level as a child of it- The road segments, the Point PickUps, any Kill Walls, and Hazard Zones. I will also fold our Directional Light and Global Volume in there as well.
+Before we start, create a new empty GameObject *Environment* and reset its `Transform` component. We will place almost every physical GameObject that composes our level as a child of it- The road segments, the Point PickUps, any Kill Walls, and Hazard Zones. I will also fold our Directional Light and Global Volume in there as well. **We will not include the Camera Rig or Player, in this Environment object, though.**
 
-Furthermore, we will create a few more empty GameObjects in the *Environment*: *Roads* *Pick Ups* *Kill Walls* and *Hazard Zones*, which we will move all objects of the respective types under. 
+Furthermore, we will create a few more empty GameObjects in the *Environment*: *Roads*, *Pick Ups*, *Kill Walls*, and *Hazard Zones*, which we will move all objects of the respective types under. 
 
 This will make our hierarchy MUCH cleaner. It also helps us separate important GameObjects like our *Camera Rig* and our *Player* out from less important features.
 
 #### Level Building
 
-Add about six more road segments to the level and fill it up with Kill Walls, Hazards, and Pick Ups in various configurations to make an interesting level! At the end of the level, just create a Kill Wall with too much health to destroy so the player does not go off the end of the game. Try using some moving hazards as well!
+Add a few more road segments to the level and fill it up with Kill Walls, Hazards, and Pick Ups in various configurations to make an interesting level! At the end of the level, just create a Kill Wall with too much health to destroy so the player does not go off the end of the game. Try using some moving hazards as well!
 
 The following is a little bit of advice on this process.
 
@@ -1664,7 +1700,7 @@ Here is another scenario:
 
 In this placement, the three orange pick ups are unreachable without hitting a hazard zone. However, it is actually **worthwhile** to lose one or two missiles by cutting through the hazard volume in order to pick up the nine points from the orange group.
 
-It is even worth it when you factor in the opportunity cost of getting the group of four yellow pick ups on the left side, which is what would conventionally seem more appealing.
+It is even worth it when you factor in the opportunity cost of missing the group of four yellow pick ups on the left side, which is what would conventionally seem more appealing.
 
 The interaction between these two game elements is much more engaging than they are individually. Designing game mechanics which play off of each other synergistically is a great way to **do more with less**- which is a great principle to stride towards when you are doing indie development!
 
@@ -1715,11 +1751,12 @@ public class GameManager : MonoBehaviour
 }
 ```
 
-The `UnityEngine.SceneManagement` allows us access to the `SceneManager`, which enables usage of the `SceneManager` which can load scenes. In the `ResetLevel` method, we simply tell it to load the *Main* scene, which will essentially reload the level from scratch.
+???+ abstract
+    The `UnityEngine.SceneManagement` allows us access to the `SceneManager`, which enables usage of the `SceneManager` which can load scenes. In the `ResetLevel` method, we simply tell it to load the *Main* scene, which will essentially reload the level from scratch.
 
-The `QuitGame` method does exactly that- closes the application with an exit code of 0 (An OK status code).
+    The `QuitGame` method does exactly that- closes the application with an exit code of 0 (An OK status code).
 
-Both of those methods are invoked by a Input Action response method `OnReset` or `OnQuit`. Note that you could just execute those two calls in the Input Action response bodies themselves, but it is usually better practice to just have them call methods instead.
+    Both of those methods are invoked by a Input Action response method `OnReset` or `OnQuit`. Note that you could just execute those two calls in the Input Action response bodies themselves, but it is usually better practice to just have them call methods instead.
 
 If you enter Play Mode, you can now use *Space* to reset the level. **Quitting will not work in Play Mode**, however!
 
@@ -1750,24 +1787,22 @@ Even though our game looks pretty simple on the surface, you have actually learn
 
 ### Where Do I Go From Here?
 
-Game Development is a deeply practice driven discipline. Before you start working on your dream projects, keep doing what you did here- find long-form guides that can bring you through the process of **building a whole, small game, not just a couple features**. At the end of the day, your ability to make good games will depend on your knowledge of the entire game-making process, so absorbing a good volume of comprehensive guides will make you a strong developer more so than anything when you are starting out.
+Game Development is a deeply practice driven discipline. Before you start working on your dream projects, find long-form guides that can bring you through the process of **building a whole, small game, not just a couple features**. At the end of the day, your ability to make good games will depend on your knowledge of the **entire** game-making process, so absorbing a good volume of comprehensive guides will make you a strong developer more so than anything when you are starting out.
 
 Full video games can easily become some of the most complicated pieces of software you will ever work on, so do not be surprised to find out that gaining proficiency will be a slow process that will take a lot of time and dedication. The best thing you can do is pace yourself and set a schedule of time dedicated to it!
 
-### What Else is There *Here* for Me?
-I very particularly made *Rocket Runner* to be a game which can be expanded in many different ways. It is a good baseline by which many improvements could be made- all of which would be individual guides all on their own. Some examples of improvements that could be made are as follows:
+### What Else Is There *Here* For Me?
+I very particularly made *Rocket Runner* to be a game which can be expanded in many different ways. It is a good baseline by which many improvements could be made- all of which would be individual tutorials all on their own. Some examples of improvements that could be made are as follows:
 
 * We could turn our game into an **endless** runner by procedurally generating new road segments. The difficulty could be ramped up as time goes along.
     * *This* would be a major improvement towards making it into a very solid game. Definitely come back to this project and give this a try if nothing else once you have more experience.
 * Many, many visual effects could be added:
-    * Missile explosion particle effects
-    * Particle or debris effects when the *Player* or *Kill Walls* are destroyed
+    * Missile explosion particle effects.
+    * Particle or debris effects when the *Player* or *Kill Walls* are destroyed.
     * Point PickUps could be made prettier, turned into orb-like pick ups.
-    * Trails on missiles, as well as making them fly at *Kill Walls* in a more interesting pattern
+    * Trails on missiles, as well as making them fly at *Kill Walls* in a more interesting pattern.
     * A better looking skybox and some lighting effects.
 * Sound effects could be added to movement, explosions, and missile firing. Some music would be nice too.
 * A main menu and pause screen would make the game a bit less clunky. Maybe a leaderboard for *distance traveled* too?
 
-Ideally in the future, this guide will be expanded to tackle some of the above improvements in some additional modules.
-
-MAKE SURE TO MENTION ALL ASSIGNEMTNS VIA THE INSPECTOR.
+Ideally in the future, this tutorial will be expanded to tackle some of the above improvements in some additional modules.

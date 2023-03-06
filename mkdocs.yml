@@ -34,6 +34,7 @@ theme:
     - optimize
 
 markdown_extensions:
+  - admonition
   - attr_list
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
@@ -45,6 +46,9 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.keys
+
 # Do not touch anything above here!
 
 # Here is where you can route new pages
@@ -52,20 +56,20 @@ nav:
   - Home: 'index.md'
   - Tutorials:
     - 'Tutorials Index': 'tutorials/tutorials-index.md'
-    - Unity:
+    - Unity Tutorials:
+      - 'Introduction to the Editor': 'tutorials/unity-tutorials/unity-editor-introduction.md'
       - First Steps:
-        - 'Introduction': 'tutorials/unity/first-step-series/unity-first-step-index.md'
-        - 'Install Unity': 'tutorials/unity/first-step-series/unity-first-step-install.md'
-        - 'Create a New Project': 'tutorials/unity/first-step-series/unity-first-step-new-proj.md'
-        - 'Rocket Runner Base': 'tutorials/unity/first-step-series/unity-runner-1.md'
+        - 'Introduction': 'tutorials/unity-tutorials/first-step-series/unity-first-step-index.md'
+        - 'Install Unity': 'tutorials/unity-tutorials/first-step-series/unity-first-step-install.md'
+        - 'Create a New Project': 'tutorials/unity-tutorials/first-step-series/unity-first-step-new-proj.md'
+        - 'Rocket Runner Base': 'tutorials/unity-tutorials/first-step-series/unity-runner-1.md'
   - Guides:
     - 'Guide Index': 'guides/guides-index.md'
 
   - Articles:
     - 'Article Index': 'articles/articles-index.md'
     - 'Unity Articles':
-      - 'Project Type Capabilities': 'articles/unity-articles/unity-type-capabilities.md'
-      - 'Introduction to the Editor': 'articles/unity-articles/unity-editor-introduction.md'
+      - 'Unity Overview': 'articles/unity-articles/unity-overview.md'
       - 'Scriptable Render Pipelines': 'articles/unity-articles/unity-render-pipelines.md'
 
 

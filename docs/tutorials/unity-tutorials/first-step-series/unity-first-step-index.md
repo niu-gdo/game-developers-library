@@ -3,13 +3,14 @@
 ## Introduction
 Welcome to the Unity First Step Series! This is a collection of guides which will show you how to create a very basic game in Unity, starting from pre-installation.
 
-**For an absolutely new beginner to game development, I *highly* recommend you take a detour to Unity's *Roll-a-Ball* tutorial project**. It is a great first step for anyone's first game, and this guide will not be trying to reinvent that wheel.
+???+ warning "Getting Your Feet Wet!"
+    **For an absolutely new beginner to game development, I *highly* recommend you take a detour to Unity's *Roll-a-Ball* tutorial project**. It is a great first step for anyone's first game, and this guide will not be trying to reinvent that wheel.
 
-[Roll-a-Ball Tutorial Project](https://learn.unity.com/project/roll-a-ball?uv=2019.4)  
+    [Roll-a-Ball Tutorial Project](https://learn.unity.com/project/roll-a-ball?uv=2019.4)  
 
-Be sure to install the recommended version of Unity the tutorial provides, which will likely be different from the version you install in our [Installing Unity](./unity-first-step-install.md) guide.
+    Instead, this tutorial will introduce you to some more **intermediate techniques** that will allow you to springboard into other more complex tutorials out there.
 
-Instead, this tutorial will introduce you to some more **intermediate techniques** that will allow you to proficiently make some more complex games.
+    Know how to program, but not familiar with C#? [Read Unity's article on C# programming](https://unity.com/how-to/learning-c-sharp-unity-beginners) to get up to speed. It is pretty easier to learn if you are familiar with C++ or Java.
 
 ### Rocket Runner
 ![Demo of the runner game created with this guide](./res/runner-game-demo.gif)
