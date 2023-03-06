@@ -68,6 +68,7 @@ nav:
 
   - Articles:
     - 'Article Index': 'articles/articles-index.md'
+    - "Game Developer's Survival Guide": articles/game-developers-survival-guide.md
     - 'Unity Articles':
       - 'Unity Overview': 'articles/unity-articles/unity-overview.md'
       - 'Scriptable Render Pipelines': 'articles/unity-articles/unity-render-pipelines.md'

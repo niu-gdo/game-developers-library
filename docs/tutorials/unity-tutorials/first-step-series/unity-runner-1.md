@@ -114,7 +114,7 @@ Just like we did in the editor introduction, we will add some color to our scene
 
 #### Add some color
 
-Since this is already explained in [Introduction to the Editor](../../../articles/unity-articles/unity-editor-introduction.md#add-some-color), we will be brief here.
+Since this is already explained in [Introduction to the Editor](../unity-editor-introduction.md#add-some-color), we will be brief here.
 
 Create a `Materials` folder and add three materials, *Ground*, *Wall*, and *Player* and apply them to their respective objects by drag-and-dropping in the Scene window. I personally used a light-cyan for the ground, a dark blue for the walls, and a magenta for the player.
 
