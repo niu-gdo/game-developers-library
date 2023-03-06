@@ -33,7 +33,7 @@ You should now have both MkDocs and Material for MkDocs installed!
 
 ## Editing with MkDocs
 
-While some text editors allow you to see formated .md files as you edit them, you will notice that your local branches of GDL do not look anything like the website. This, of course, is because MkDocs has not yet converted the .md files to the formal website. 
+While some text editors allow you to see formatted .md files as you edit them, you will notice that your local branches of GDL do not look anything like the website. This, of course, is because MkDocs has not yet converted the .md files to the formal website. 
 
 If you want mkdocs to build the actual site, run `mkdocs build` in the root directory of the project, and you will see a site/ directory produced. This directory will contain all of the files needed for the actual website, including an index.html.
 

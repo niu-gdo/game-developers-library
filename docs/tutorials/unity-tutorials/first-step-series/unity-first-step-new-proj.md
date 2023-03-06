@@ -16,7 +16,7 @@ For our runner game, we will simply pick the 3D (URP) template.
 
 On the right side, pick a name for your project. I call the project *Rocket Runner*, but feel free to name it what you wish.
 
-You can also pick a directory (or file path) for your project. I recommend changing it to a fast drive on your system, such as an SSD or M.2 drive. [Unity has a reputation for being quite hefty to load](https://i.redd.it/sqa3vpmcv4t61.jpg).
+You can also pick a directory (or file path) for your project. I recommend changing it to a fast drive on your system, such as an SSD or M.2 drive. Unity has a reputation for being quite hefty to load.
 
 When you're ready, press 'Create Project' and your project will be initialized for you. The first load will take a little bit longer than subsequent loads.
 
@@ -25,6 +25,6 @@ You now have a new playground to mess around in, time to get to work! \o/
 
 Now is a good time to view our article on acquainting yourself with the Unity Editor! Or, move straight into the runner game series.
 
-Recommended: [Introduction to the Editor](../../../articles/unity-articles/unity-editor-introduction.md)
+Recommended: [Introduction to the Editor](../unity-editor-introduction.md)
 
 Next: [Rocket Runner Part 1](./unity-runner-1.md)

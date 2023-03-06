@@ -1,25 +1,12 @@
 # Guides
 
-Guides are long-form, detailed write ups on how readers can go about implementing some kind of strategy within their projects.
-
-Most will be engine, library, or tool specific, but some guides may be able to provide generalized details on reproduction in any application.
+Our guides are more generally structured pages which serve as both an introduction to and a repository for various topics that would be too complex to sum up in an article. They will provide enough information to become familiar with a concept, but will out source further reading to other places.
 
 ## Unity
-* [Additive Scene Loading](./unity-guides/additiveloading.md) by Harry
-* File Saving by Jeffrey
-* Coping With Long Load Times by Larry
+* Unity guides to come!
 
 ## Unreal
-* Making Things Shiny by Tyler
-* Making a Water Shader by Byler
-* Coping With using Epic Games Launcher by Lyler
+* Knowledgable about the Unreal engine? Help us out by creating some literature here!
 
 ## Godot
-* Creating an Inventory System by Colton
-* Exporting to Android / iOS by Jesse
-* Coping With the Built-In Text Editor by Lily
-
-## Blender
-* Making Better Fingers by Courtney
-* Rigging a Humanoid by Jacob
-* Donut by Nick
+* Godot guides coming in the future, especially once version 4 has mutured a bit.

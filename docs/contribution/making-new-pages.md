@@ -59,7 +59,7 @@ git push -u origin <branch-name>
 ### Create a Pull Request
 Visit the GitHub Repo on a web browser and go to *Pull Requests -> Create Pull Request*. Select *main* as the base, and your new branch as the compare. `base: main <- compare: <branch-name>`, then create the pull request.
 
-In the description of the merge, write what changes your branch brings. In the top right, request some reviewers. **At minimum, request the review of at least one Head Librarian**, Jake Rogers (Explosive Eggshells) is probably a good start.
+In the description of the merge, write what changes your branch brings. In the top right, request some reviewers. **At minimum, request the review of Jake Rogers (Explosive Eggshells)**.
 
 ### Updating a Pull Request
 Reviewers will inspect any files added or changed in your pull request, and approve it if all looks good. If something needs to be changed, you can go back to your local branch, commit those changes, then run `git push <branch-name>` once again to update the pull request.
