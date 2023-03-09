@@ -51,7 +51,8 @@ markdown_extensions:
 
 # Do not touch anything above here!
 
-# Here is where you can route new pages
+# Here is where you can route new pages. The hierarchy presented here will mimic the site
+# map shown in the sidebar. Put any new routes as a new line under the appropriate category.
 nav:
   - Home: 'index.md'
   - Tutorials:
@@ -63,8 +64,11 @@ nav:
         - 'Install Unity': 'tutorials/unity-tutorials/first-step-series/unity-first-step-install.md'
         - 'Create a New Project': 'tutorials/unity-tutorials/first-step-series/unity-first-step-new-proj.md'
         - 'Rocket Runner Base': 'tutorials/unity-tutorials/first-step-series/unity-runner-1.md'
+
   - Guides:
     - 'Guide Index': 'guides/guides-index.md'
+    - General Articles:
+      - 'Handling and Creating Save Files': 'guides/general-guides/general-handling-and-creating-save-files.md'
 
   - Articles:
     - 'Article Index': 'articles/articles-index.md'
@@ -72,7 +76,6 @@ nav:
     - 'Unity Articles':
       - 'Unity Overview': 'articles/unity-articles/unity-overview.md'
       - 'Scriptable Render Pipelines': 'articles/unity-articles/unity-render-pipelines.md'
-
 
   - Contribution:
     - 'Using MkDocs': 'contribution/mkdocs-usage.md'
