@@ -181,4 +181,9 @@ like a nightmare after line 10,000. That is just what scale looks like.
 
 ## Up Next: Setup and Win32 Basics
 
+In the next article we will set up our development environment using CMake and
+look to build out our application with the Win32 API. We will explore Window's
+application main entry point, defining some primitive data types, and launch our
+window.
 
+[>> Article 02: Setup and Win32 Basics](./article_02.md)
