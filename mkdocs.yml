@@ -63,9 +63,11 @@ nav:
         - 'Install Unity': 'tutorials/unity-tutorials/first-step-series/unity-first-step-install.md'
         - 'Create a New Project': 'tutorials/unity-tutorials/first-step-series/unity-first-step-new-proj.md'
         - 'Rocket Runner Base': 'tutorials/unity-tutorials/first-step-series/unity-runner-1.md'
-    - 'Game Engines':
-      - 'Introduction': 'articles/game-engines/introduction-to-game-engines.md'
-      - 'Getting Started with Win32': 'articles/game-engines/getting-started-with-win32.md'
+    - Game Engines:
+      - 'Introduction': 'tutorials/game-engines/introduction-to-game-engines.md'
+      - 'Win32 Environment Setup': 'tutorials/game-engines/win32-environment-setup.md'
+      - Platform:
+        - 'Getting Started with Win32': 'tutorials/game-engines/platform/getting-started-with-win32.md'
   - Guides:
     - 'Guide Index': 'guides/guides-index.md'
 

@@ -1,4 +1,3 @@
-## Introduction to Game Engines
 *Written by Chris DeJong - 4/19/2023*
 
 Modern game engines are designed to encompass every feature a game designer will need to create their games.
@@ -154,11 +153,9 @@ your project and refactor everything just to meet your new standards. If you abs
 must, don't refactor, just switch. I don't know of any code base that doesn't look
 like a nightmare after line 10,000. That is just what scale looks like.
 
-## Up Next: Setup and Win32 Basics
+## Up Next: Win32 Environment Setup
 
 In the next article we will set up our development environment using CMake and
-look to build out our application with the Win32 API. We will explore Window's
-application main entry point, defining some primitive data types, and launch our
-window.
+get everything we need to start developing our game engine.
 
-Next: [Gettings Started with Win32 (Coming Soon!)](./getting-started-with-win32.md)
+Next: [Win32 Environment Setup](./win32-environment-setup.md)
