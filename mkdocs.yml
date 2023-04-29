@@ -84,3 +84,9 @@ nav:
   - Contribution:
     - 'Using MkDocs': 'contribution/mkdocs-usage.md'
     - 'Making New Pages': 'contribution/making-new-pages.md'
+
+# Extra configuration
+extra:
+  analytics:
+    provider: google
+    property: G-69EN7JLEVJ
