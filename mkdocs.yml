@@ -1,4 +1,5 @@
 site_name: Game Developer's Library
+site_url: https://library.niugame.dev/
 theme:
   name: material
   palette: 
