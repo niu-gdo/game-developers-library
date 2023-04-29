@@ -1,5 +1,6 @@
 site_name: Game Developer's Library
 site_url: https://library.niugame.dev/
+repo_url: https://github.com/niu-gdo/game-developers-library/
 theme:
   name: material
   palette: 
