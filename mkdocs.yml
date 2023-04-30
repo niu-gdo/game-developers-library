@@ -35,6 +35,7 @@ theme:
   
   plugins:
     - optimize
+    - search
 
 markdown_extensions:
   - admonition
