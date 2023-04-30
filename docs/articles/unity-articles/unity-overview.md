@@ -1,3 +1,11 @@
+---
+title: Unity Overview
+summary: Unity, like other popular game engines, has support for making many types of games. Here are some brief notes about Unity's ability to make certain types of games.
+description: Unity, like other popular game engines, has support for making many types of games. Here are some brief notes about Unity's ability to make certain types of games.
+authors:
+    - Jake Rogers
+date: 2023-03-05
+---
 # Unity Overview
 *By Jake Rogers*
 

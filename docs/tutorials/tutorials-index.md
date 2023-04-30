@@ -1,3 +1,11 @@
+---
+title: Tutorials
+summary: Tutorials are long-form, nearly step-by-step write ups that readers can follow to recreate a particular outcome, often for the purpose of learning as one follows along.
+description: Tutorials are long-form, nearly step-by-step write ups that readers can follow to recreate a particular outcome, often for the purpose of learning as one follows along.
+authors:
+    - Jake Rogers
+date: 2023-04-20
+---
 # Tutorials
 
 Tutorials are long-form, nearly step-by-step write ups that readers can follow to recreate a particular outcome, often for the purpose of learning as one follows along.

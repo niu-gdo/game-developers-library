@@ -1,3 +1,11 @@
+---
+title: Making New Pages
+summary: MkDocs allows you to create a new page in GDL by simply creating a new markdown page and merging it into our main branch.
+description: MkDocs allows you to create a new page in GDL by simply creating a new markdown page and merging it into our main branch.
+authors:
+    - Jake Rogers
+date: 2023-03-05
+---
 # Making New Pages
 
 MkDocs allows you to create a new page in GDL by simply creating a new markdown page and merging it into our main branch.

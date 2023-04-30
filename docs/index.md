@@ -1,5 +1,3 @@
-# Home
-
 # Welcome to the Game Developer's Library!
 
 The Game Developer's Library (GDL) is a repository of articles which serve to educate readers on independent game development. Articles, guides, and tutorials about game development, be it engine-specific guides, general development strategies, or even lower level concepts in computer graphics find a home here!

@@ -1,6 +1,13 @@
+---
+title: Game Developer's Survival Guide
+summary: From those who have graduated from the school of hard knocks, we present to beginners a list of hot tips as you begin your journey into game development, the Game Developer's Survival Guide!
+description: From those who have graduated from the school of hard knocks, we present to beginners a list of hot tips as you begin your journey into game development, the Game Developer's Survival Guide!
+authors:
+    - Jake Rogers
+date: 2023-03-06
+---
 # Game Developer's Survival Guide
-
-By Jake Rogers
+*By Jake Rogers*
 
 ## Introduction
 

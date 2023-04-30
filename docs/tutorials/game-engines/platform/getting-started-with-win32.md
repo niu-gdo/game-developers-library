@@ -1,3 +1,11 @@
+---
+title: Getting Started with Win32
+summary: Continuing from the previous article in the series on Win32, we will discuss the entry point.
+description: ontinuing from the previous article in the series on Win32, we will discuss the entry point.
+authors:
+    - Chris DeJong
+date: 2023-04-20
+---
 *Written by Chris DeJong - 4/20/2023*
 
 If you haven't followed the [previous article yet, please do so now](../win32-environment-setup.md)

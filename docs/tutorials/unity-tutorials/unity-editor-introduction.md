@@ -1,3 +1,11 @@
+---
+title: Unity | Introduction to the Editor
+summary: This article will familiarize new Unity users with some important features of the editor.
+description: This article will familiarize new Unity users with some important features of the editor.
+authors:
+    - Jake Rogers
+date: 2023-03-05
+---
 # Introduction to the Editor
 *By Jake Rogers*
 

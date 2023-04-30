@@ -1,3 +1,11 @@
+---
+title: Unity Scriptable Render Pipelines
+summary: SRPs allow for Unity to provide multiple different ways for projects to handle rendering graphics from the game to screens.
+description: SRPs allow for Unity to provide multiple different ways for projects to handle rendering graphics from the game to screens.
+authors:
+    - Jake Rogers
+date: 2023-02-19
+---
 # Scriptable Render Pipelines
 *By Jake Rogers*
 

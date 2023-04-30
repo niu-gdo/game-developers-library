@@ -1,3 +1,11 @@
+---
+title: Introduction To Game Engines
+summary: At the simplest level, game engines are graphics renderers with interactive controls.
+description: At the simplest level, game engines are graphics renderers with interactive controls.
+authors:
+    - Chris DeJong
+date: 2023-04-19
+---
 *Written by Chris DeJong - 4/19/2023*
 
 Modern game engines are designed to encompass every feature a game designer will need to create their games.
