@@ -1,3 +1,11 @@
+---
+title: Unity First Steps Series
+summary: Welcome to the Unity First Step Series! This is a collection of guides which will show you how to create a very basic game in Unity, starting from pre-installation.
+description: Welcome to the Unity First Step Series! This is a collection of guides which will show you how to create a very basic game in Unity, starting from pre-installation.
+authors:
+    - Jake Rogers
+date: 2023-03-05
+---
 # Unity First Steps Series
 
 ## Introduction

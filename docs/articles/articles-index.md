@@ -1,3 +1,11 @@
+---
+title: Articles
+summary: Our articles are shorter entries which aim to educate readers about a specific topic related to game development or individual tools.
+description: Our articles are shorter entries which aim to educate readers about a specific topic related to game development or individual tools.
+authors:
+    - Jake Rogers
+date: 2023-03-06
+---
 # Articles
 
 Our articles are shorter entries which aim to educate readers about a specific topic related to game development or individual tools.

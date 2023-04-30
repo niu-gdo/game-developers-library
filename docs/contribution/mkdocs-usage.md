@@ -1,5 +1,13 @@
+---
+title: Using MkDocs
+summary: GDL uses MkDocs to convert .md files into html & CSS files.
+description: GDL uses MkDocs to convert .md files into html & CSS files.
+authors:
+    - Jake Rogers
+date: 2023-03-05
+---
 # Using MkDocs
-By Jake Rogers
+*By Jake Rogers*
 
 ## MkDocs
 GDL uses MkDocs to convert .md files into html & CSS files. When MkDocs builds, it finds any .md files found within the /docs/ directory and generates a cohesive website from what it finds, featuring a few extra goodies:

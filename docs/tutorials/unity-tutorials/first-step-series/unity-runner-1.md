@@ -1,3 +1,11 @@
+---
+title: Welcome to Rocket Runner! - Unity First Steps Series
+summary: Continuing from the previous entry in the series, we will set up and build the Rocket Runner game step-by-step.
+description: Continuing from the previous entry in the series, we will set up and build the Rocket Runner game step-by-step.
+authors:
+    - Jake Rogers
+date: 2023-03-06
+---
 # Welcome to Rocket Runner!
 *By Jake Rogers*
 

@@ -1,4 +1,7 @@
 site_name: Game Developer's Library
+site_url: https://library.niugame.dev/
+repo_url: https://github.com/niu-gdo/game-developers-library/
+site_description: The Game Developer's Library (GDL) is a repository of articles which serve to educate readers on independent game development.
 theme:
   name: material
   palette: 
@@ -32,6 +35,7 @@ theme:
   
   plugins:
     - optimize
+    - search
 
 markdown_extensions:
   - admonition
@@ -81,3 +85,9 @@ nav:
   - Contribution:
     - 'Using MkDocs': 'contribution/mkdocs-usage.md'
     - 'Making New Pages': 'contribution/making-new-pages.md'
+
+# Extra configuration
+extra:
+  analytics:
+    provider: google
+    property: G-69EN7JLEVJ

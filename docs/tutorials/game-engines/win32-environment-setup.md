@@ -1,3 +1,11 @@
+---
+title: Win32 Environment Setup
+summary: Before we can dive right in, there is some paper work to get out of the way. Setting up the Win32 development environment.
+description: Before we can dive right in, there is some paper work to get out of the way. Setting up the Win32 development environment.
+authors:
+    - Chris DeJong
+date: 2023-04-19
+---
 *Written by Chris DeJong - 4/19/2023*
 
 Before we can dive right in, there is some paper work to get out of the way. Fortunately,

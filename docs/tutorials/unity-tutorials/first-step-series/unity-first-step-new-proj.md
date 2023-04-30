@@ -1,5 +1,13 @@
+---
+title: Create a New Unity Project - Unity First Steps Series
+summary: After installing Unity, we can create a new project through Unity Hub. Let's make a new project for our runner game.
+description: After installing Unity, we can create a new project through Unity Hub. Let's make a new project for our runner game.
+authors:
+    - Jake Rogers
+date: 2023-03-05
+---
 # Create a New Unity Project
-By Jake Rogers
+*By Jake Rogers*
 
 ## Introduction
 After [installing Unity](./unity-first-step-install.md), we can create a new project through Unity Hub. Let's make a new project for our runner game.

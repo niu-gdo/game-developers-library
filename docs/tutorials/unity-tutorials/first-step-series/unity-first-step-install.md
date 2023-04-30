@@ -1,3 +1,11 @@
+---
+title: Installation - Unity First Steps Series
+summary: In this section, we will download Unity and some other necessary tools.
+description: In this section, we will download Unity and some other necessary tools.
+authors:
+    - Jake Rogers
+date: 2023-03-05
+---
 # Unity Installation
 *By Jake Rogers*
 
