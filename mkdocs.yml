@@ -64,10 +64,11 @@ nav:
         - 'Create a New Project': 'tutorials/unity-tutorials/first-step-series/unity-first-step-new-proj.md'
         - 'Rocket Runner Base': 'tutorials/unity-tutorials/first-step-series/unity-runner-1.md'
     - Game Engines:
-      - 'Introduction': 'tutorials/game-engines/introduction-to-game-engines.md'
-      - 'Win32 Environment Setup': 'tutorials/game-engines/win32-environment-setup.md'
-      - Platform:
-        - 'Getting Started with Win32': 'tutorials/game-engines/platform/getting-started-with-win32.md'
+      - 'Article 1: Introduction': 'tutorials/game-engines/introduction-to-game-engines.md'
+      - 'Article 2: Win32 Environment Setup': 'tutorials/game-engines/win32-environment-setup.md'
+      - 'Article 3: Platform Layer':
+        - 'Article 3a: Getting Started with Win32': 'tutorials/game-engines/platform/getting-started-with-win32.md'
+        - 'Article 3b: Creating a Window': 'tutorials/game-engines/platform/creating-a-window.md'
   - Guides:
     - 'Guide Index': 'guides/guides-index.md'
 

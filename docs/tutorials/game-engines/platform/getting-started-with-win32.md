@@ -97,11 +97,9 @@ Hit ok, the application will close.
 
 ## Up Next: Creating a Window
 
-In the next article, we will look at how to create a window with the Win32 API.
-By creating a window, it will be possible to blit pixels to the screen and, from there,
-flesh out a primitive drawing routine which will give us our first taste into software
-rendering.
+In the next article, we will look at how to create a window with the Win32 API
+and message procedures necessary to operate with windows.
 
 Prev: [Win32 Environment Setup](../win32-environment-setup.md)
 
-Next: Coming Soon!
+Next: [Creating a Window](./creating-a-window.md)
