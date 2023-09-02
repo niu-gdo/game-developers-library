@@ -74,6 +74,8 @@ nav:
         - 'Getting Started with Win32': 'tutorials/game-engines/platform/getting-started-with-win32.md'
   - Guides:
     - 'Guide Index': 'guides/guides-index.md'
+    - Unity Guides:
+        - 'Unity Guides Index': 'guides/unity-guides/unity-guides-index.md'
 
   - Articles:
     - 'Article Index': 'articles/articles-index.md'
