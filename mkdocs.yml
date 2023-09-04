@@ -76,6 +76,7 @@ nav:
     - 'Guide Index': 'guides/guides-index.md'
     - Unity Guides:
         - 'Unity Guides Index': 'guides/unity-guides/unity-guides-index.md'
+        - 'C# Language Features': 'guides/unity-guides/cs-language-features.md'
 
   - Articles:
     - 'Article Index': 'articles/articles-index.md'
