@@ -15,7 +15,7 @@ Visit [this project's GitHub Page](https://github.com/niu-gdo/game-jam-template-
 
 **Be sure to select the 'base-template' branch before cloning or downloading the ZIP.**
 
-???+ question "What's in the Box?"
+??? question "What's in the Box?"
     The starting template comes preconfigured with initialized packages and art assets to make syncing up with the tutorial as painless as possible.
 
     For your information when you start making your own projects, we've included the following:
@@ -27,14 +27,51 @@ Visit [this project's GitHub Page](https://github.com/niu-gdo/game-jam-template-
 
     Everything else is up to you to make. Fun!
 
+Once you have the project open in Unity, take a brief second to **regenerate your project files for Visual Studio**. This is done by selecting along the top `Edit -> Preferences... -> External Tools -> External Script Editor -> Visual Studio 2022 / 2019`. 
+
+Then, press the '*Regenerate project files*' button.
+
+![](./base-res/regenerate-project-files.gif)
+
+??? question "Why Did I Need to do That?"
+    Some files that Visual Studio uses to provide many contextual coding features are often not uploaded to source control systems, so they won't be included when you clone or download from a repository.
+
+    Therefore, it is usually a good idea (unless told otherwise) to regenerate these project files when you first download a repository before you wonder why everything looks broken in Visual Studio!
+
+Lastly, whenever you download a new Unity project, Unity typically doesn't know what scene it should open, so you'll wind up on an empty, unsaved one. Before continuing, open the `Scenes` folder in the *Project* window and open the *SampleScene*.
+
 # Chapter 2: Scene and Art
 In this chapter, we will get warmed up with the Unity Editor by building the Game Objects (GOs) for what will eventually be our Player and Enemies. We'll also make quick use of our art assets so we have something pretty to look at.
 
-# Chapter 3: Player Scripts
+### Adding the Background
+The default grey background is pretty ugly, so let's pull in our background art to quickly remedy that.
+
+In the project window, find `Art -> Backgrounds -> darkPurple`. This is a tilable PNG background which we can use to cover the entire screen space. Drag the *darkPurple* image asset into an empty space on the *Hierarchy* window to add it to the scene (ensure it hasn't been made a child of anything else).
+
+If you were to try and resize the sprite using the *Scale* or *Rect* tool, you'll notice that it just stretches and distorts, which looks terrible. Instead, we must *tile* the sprite to allow it to repeat across a region instead of stretching.
+
+To do so, select the new sprite we added to the *Hierarchy* to view it in the *Inspector*. Make the following changes:
+
+* Draw Mode: Tiled
+    * Size, Width: 35
+    * Size, Height: 35
+
+This will accomplish the desired tiling effect, which looks much better than stretching it! Let's also rename the Game Object from '*darkPurple*' to '*Background*'.
+
+Lastly, you may have noticed that the background's Inspector window is displaying a warning about the sprite's Mesh Type. We'll resolve this by doing exactly what it says: Select the `Art -> Backgrounds -> darkPurple` asset in the *Project* window and change the Mesh Type to 'Tiled', then hit apply.
+
+![](./base-res/add-tilable-background.gif)
+
+Note that you can of course use any of the other backgrounds provided if you like them more, and you can also select the sprite Game Object and change it's *Color* property to tint them as well!
+
+### Creating the Player Game Object
+
+# Chapter 3: Enemy Scripts
+In this chapter, we will create (much simpler) script which moves our enemies and kills the player should they touch them.
+
+# Chapter 4: Player Scripts
 In this chapter, we'll write some custom behavior scripts which will make our player Game Object move in response to the user's input.
 
-# Chapter 4: Enemy Scripts
-In this chapter, we will create (much simpler) script which moves our enemies and kills the player should they touch them.
 
 # Chapter 5: Laser Gun
 In this chapter, we'll create the feature which allows the player to fire lasers that can destroy enemies.
