@@ -96,6 +96,8 @@ On *Base Sprite*, we can use whatever sprite we would like for our player by dra
     
     This is often a much faster way to fill in things from the inspector if you don't have them already visible in the *Project* window!
 
+![](./base-res/create-player-visuals.gif)
+
 You __may__ have noticed an issue here, which is that the Player sprite appears to be drawing *underneath* the background, thusly making it not visible (This may or may not occur depending on a couple of factors, but it needs to be fixed regardless).
 
 To fix this, we need to set up *Sprite Sorting Layers* which define what groups of sprites should render on top of others. Fold out the *Layers* drop down button in the top-right of the editor, and select '*Edit Layers*'.
@@ -112,10 +114,12 @@ Things at the bottom of the list will *always* render in front of things closer 
 
 Select the *Background* and change the *Sprite Renderer*'s `Sorting Layer` to `Background`. Change the Player's *Base Sprite*'s `Sorting Layer` to `Player`. There should be no rendering conflicts now!
 
+![](./base-res/fix-sprite-sorting-layers.gif)
+
 ##### Enemy
 We've got a great opportunity to be lazy here. Let's duplicate the *Player* Game Object (select it and press ++ctrl+d++), then rename it to *'Enemy'*. You can then change its *Base Sprite*'s `Sprite` to one of the asteroid sprites. I'll be using `Art -> Sprites -> meteorBrown_big1`.
 
-Don't forget to change sorting layer for the enemy's base sprite to `Enemy` instead of `Player`, and you're done!
+Don't forget to change sorting layer for the enemy's base sprite to `Enemy` instead of `Player`. Also, move the *Enemy* a bit below the *Player* (but still on screen) so that they aren't overlapping.
 
 # Chapter 3: Enemy Scripts
 In order to get our enemies to do exactly what we want them to, we'll need to write custom scripts to dictate how what they should do when the game runs through code. Since the design goals for the Enemy are much simpler than for the Player, we'll start on the Enemy.
@@ -135,6 +139,8 @@ If you enter play mode immediately after doing so, you'll actually notice your e
 We don't really want gravity here though. In fact, we would like to have very explicit control over how our enemy moves (In other words, we don't want the physics engine doing anything to it unless we code it that way). Fortunately, changing the Rigidbody2D's `Body Type` property to `Kinematic` in the *Inspector* will do exactly that- the Enemy will no longer be affected by gravity or bounced around by other objects. Cool.
 
 Before we continue, we do still need to add a *Collider* to this Game Object configured to be a Trigger so that we can tell when it hits the Player. Do `Add Component -> Circle Collider` to do so. Check the `Is Trigger` property, and press the `Edit Collider` button to change the hitbox to your liking (or use the `Radius` property to numerically change the size).
+
+![](./base-res/enemy-rigidbody-configuration.PNG)
 
 Great! That's all the set up we need to start scripting!
 
@@ -174,6 +180,8 @@ public class EnemyController : MonoBehaviour
     Therefore, when the game starts, we use `GetComponent<Rigidbody2D>()` (Line 7) to search for the Rigidbody and store a reference to it- then set it's velocity to an upwards-pointing vector (0 on the X axis, 5 on the Y).
 
 Return back to Unity and attach the new `EnemyController` component to the *Enemy* Game Object, then enter play mode to watch it fly off the top of the screen!
+
+![](./base-res/enemy-initial-fly-off.gif)
 
 ##### Movement Adjustments
 There two things we would like to change about how we move the Enemy. First- in order to change the Enemy's speed, we currently have to go back into the code, change it, and recompile it. Not only is this a hassle, but it also means *all* enemies have to move at the same speed, which is very inflexible.
@@ -217,7 +225,7 @@ For this game, we use any projectile's Y-Axis (The *green* one, colloqually the 
 ??? question "How Can I Tell What Direction a Game Object is 'Facing'?"
     In the Editor, select a Game Object, then ensure your rotation mode (Located in the top left of the *Scene* window, next to the tool shelf) is set to `Local`, not `Global`. 
     
-    You can then look at the direction of the *Green* arrow to see the orientation of the object.
+    You can then select the *Move Tool* in the *Scene* window to look at the direction of the *Green* arrow to see the orientation of the object.
 
     You can rotate the Game Object to observe this Up-arrow change direction.
 
@@ -307,6 +315,8 @@ There are a couple ways to determine if the thing we collided with is a particul
 
 In Chapter 4, we'll need to add a `PlayerController` to our Player, so let's go ahead and do that now so that we can search for that component while doing collsion resoluton.
 
+You will also need to add a `Rigidbody2D` and `CircleCollider` to the *Player* in order to register collisions against it. Configure both components the exact same way as you did on the *Enemy*.
+
 In the Project Window, make a new `PlayerController` C# Script, add it as a component to the Player (we do not need to edit the script yet), then make the following changes to `EnemyController`:
 ```cs title="EnemyController.cs (fragment)" linenums="20" hl_lines="20-23"
 private void OnTriggerEnter2D(Collider2D collision)
@@ -326,6 +336,8 @@ private void OnTriggerEnter2D(Collider2D collision)
     If a `PlayerController` is found, then we can procede with destroying the Player and the Enemy.
     
     If you'd like, you can confirm this works by ++ctrl+d++ duplicating the *Enemy*, rotating them to collide with one another, and witnessing them pass through one another harmlessly!
+
+![](./base-res/chpt3-end-state.gif)
 
 # Chapter 4: Player Scripts
 In this chapter, we'll write some custom behavior scripts which will make our player Game Object move in response to the user's input.
