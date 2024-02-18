@@ -32,6 +32,8 @@ theme:
   features:
     - content.code.copy
     - content.code.annotate
+    - toc.follow
+    - toc.integrate
   
   plugins:
     - optimize
