@@ -746,15 +746,177 @@ Change the `Trigger Behavior` to `Press and Release`, then click *Save Asset* at
 
 Run your game and hold down one of the Fire inputs- you now have an auto-firing laser gun!
 
+##### Timed Destroy
+One quick thing. You may have noticed that your shots never disappear and wind up clogging up the Hierarchy (and thusly, unnecessarily consume Memory and CPU usage as they sail into the great beyond).
+
+Let's create a component which will automatically destroy the Game Object it is attached to after a couple seconds to help with clean up.
+
+Create a new Script `TimedDestroy.cs`. Add it to the *Laser Projectile* **PREFAB**, and edit it:
+
+```cs title="TimedDestroy.cs" linenums="1"
+using UnityEngine;
+
+public class TimedDestroy : MonoBehaviour
+{
+    [SerializeField, Tooltip("Number of seconds after spawning that the object will destroy itself.")]
+    private float _destroyTime = 6f;
+
+    private float _spawnTime = 0f;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        _spawnTime = Time.time;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (Time.time > _spawnTime + _destroyTime)
+            Destroy(gameObject);
+    }
+}
+```
+???+ abstract
+    Dead simple!
+
+    We allow the time before destruction to be set in the inspector. Every update, we see if the game time is greater than the time we spawned in at (in `Start`) **plus** that destroy time, destroying if so.
+
+    As you noticed, this is a different way of implementing a timer than we had in the last script. Use whichever one you like better- they're both computationally similar.
+
+Your lasers will now despawn after six seconds!
+
 ## Chapter 6: Spawner
-We're almost done! 
+We're almost done! The last thing to do is create some *Enemy Spawners* which will fire enemies into the play area from afar. This will effectively work like a simplified version of our `PlayerLaserGun` with a few changes.
+
+Create an Empty Game Object in the Hierarchy called *Spawner*. Position it somewhat to the side of the player so we don't immediately hit them with an Enemy.
+
+???+ tip "Game Object Markers"
+    For Game Objects that have no Visuals, it can be easy to lose them in the Scene window (You know, on account of them not being visible).
+
+    In the Inspector window for a selected Game Object, you can click on the Dropdown box to the left of the Name field to assign a marker gizmos to it, making it visible to you.
+
+    I recommend doing this for the *Spawner* object.
+
+If you haven't already, take the *Enemy* Game Object and drag it into your Prefabs folder to create a Prefab of it. Again, we need to create a Prefab of an object if we would like to Instantiate (spawn) it.
+
+Now create a `Spawner.cs` script, attach it to your *Spawner* Game Object, and add the following code:
+
+```cs title="Spawner.cs" linenums="1"
+using UnityEngine;
+
+public class Spawner : MonoBehaviour
+{
+    [SerializeField, Tooltip("A game object to spawn.")]
+    private GameObject _prefab;
+
+    [SerializeField, Tooltip("How frequently to spawn game objects in seconds.")]
+    private float _spawnInterval = 5f;
+
+    private float _spawnTimer = 0f;
+    private bool _isReadyToSpawn = false;
+
+    void Update()
+    {
+        // A simple timer that works by subtracting the time between updates, or frames,
+        // from the timer variable, counting down from whatever the spawn rate is.
+        if (_spawnTimer > 0f)
+        {
+            _spawnTimer -= Time.deltaTime;
+        }
+
+        _isReadyToSpawn = (_spawnTimer <= 0f); // Once the timer counts down to zero, the game object is ready to spawn.
+
+        if (_isReadyToSpawn)
+        {
+            // Randomly create a game object between the specified spawn radius.
+            Instantiate(_prefab, transform.position, transform.rotation);
+            _spawnTimer = _spawnInterval; // Reset the timer.
+            _isReadyToSpawn = false;
+        }
+    }
+}
+```
+
+Looks pretty similar to the `PlayerLaserGun.cs`, just like I promised, eh?
+
+Go back to the editor, **be sure to drag and drop the Enemy Prefab into the `Prefab` field on the `Spawner` component for the *Spawner***, and enter play mode. The object is now shooting Enemies!
+
+While we're at it, let's add the `TimedDestroy` component we made in Chapter 5 to the Enemy **PREFAB** so that they clean themselves up, too. Set the Destroy time to something a bit longer, like `12` or `15` seconds.
+
+##### Dispersion
+Our spawner is pretty uninteresting right now, because it always spawns Enemies in the exact same direction everytime. This won't do, because we need them to be shot out at various angles to keep things interesting.
+
+We can resolve this by adding *Dispersion* (or *Spread*) to each Enemy we shoot out. That is to say, when we instantiate a new enemy, we'll rotate it by a random number of degrees off-axis so it flies in different directions each time.
+
+Let's give it a shot:
+```cs title="Spawner.cs" linenums="1" hl_lines="12 31-34"
+using UnityEngine;
+
+public class Spawner : MonoBehaviour
+{
+    [SerializeField, Tooltip("A game object to spawn.")]
+    private GameObject _prefab;
+
+    [SerializeField, Tooltip("Number of seconds between two consecutive spawns.")]
+    private float _spawnInterval = 5f;
+
+    [SerializeField, Tooltip("The number of degrees on either side of the Y (green) axis to randomly spawn game objects between.")]
+    private float _spawnDispersion = 30f;
+
+    private float _spawnTimer = 0f;
+    private bool _isReadyToSpawn = false;
+
+    void Update()
+    {
+        // A simple timer that works by subtracting the time between updates, or frames,
+        // from the timer variable, counting down from whatever the spawn rate is.
+        if (_spawnTimer > 0f)
+        {
+            _spawnTimer -= Time.deltaTime;
+        }
+
+        _isReadyToSpawn = _spawnTimer <= 0f; // Once the timer counts down to zero, the game object is ready to spawn.
+
+        if (_isReadyToSpawn)
+        {
+            // Randomly create a game object between the specified spawn radius.
+            GameObject spawnedObject = Instantiate(_prefab, transform.position, transform.rotation);
+
+            float dispersionAngle = Random.Range(-_spawnDispersion, _spawnDispersion); // Create a random offset angle
+            spawnedObject.transform.Rotate(Vector3.forward, dispersionAngle);   // Apply rotation by created offset
+
+            _spawnTimer = _spawnInterval; // Reset the timer.
+            _isReadyToSpawn = false;
+        }
+    }
+}
+```
+???+ abstract
+    As it turns out, the `Instantiate` method actually returns a reference to the newly created Game Objected created by calling it.
+
+    Therefore, we can use the `Random.Range` method to generate an offset rotation (in degrees) and rotate the spawned object's transform by that amount (Again, in 2D, we always rotate around the Z axis, which is `Vector3.forward` or `(0, 0, 1)`).
+
+Jump in game, you'll notice your spawner has some dispersion now!
+
+##### Place Spawners
+
+The last thing to do is to turn your *Spawner* Object into a Prefab and place a couple copies of them around the outside of the play area, rotating them to face inwards toward the center. The dispersion will give them wider coverage so there is a possiblity to be hit anywhere on the screen.
+
+Note that even though we're not spawning copies of spawners through code, it's still useful to make a Prefab of the spawner so that you can edit **all** instances of spawners at once just by editing the prefab asset- a great tool for reducing repetitive work down the line.
+
+For my example, I placed three Spawners in a loosely triangular fashion around the outside. I also fired their spawn intervals so that they're not all in sync.
+
+Once that's done, you've finished this base template!
 
 ## Conclusion
-Congratulations, you've now got a pretty neat game and some basic concepts under your belt! 
+Congratulations, you've now got a pretty neat game, and you've learned a fair amount of foundational elements to game development.
 
 ### What now?
 
 This game, as is mentioned in the article's title, works as a great *template*- you can learn a lot by expanding it with your own features and experimenting. There is a lot you can do to make your version of the game unique from everyone else's, you may have already had some ideas, so try and implement them!
+
+Just remember that much of your time spent doing game development will be spent researching, experimenting, and debugging- it's perfectly fine if you're not always making object and visible progress towards finishing your games, **it's all part of the process at all skill levels**.
 
 Keep in mind as well that you can completely charge around the art assets if you're not digging the space theme- the top down controller could be used in something like a hunter dodging leopards in the jungle, ships at sea, or a dungeon crawl. Be creative!
 
