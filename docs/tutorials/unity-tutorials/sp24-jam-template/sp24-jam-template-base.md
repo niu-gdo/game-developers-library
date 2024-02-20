@@ -142,6 +142,8 @@ Before we continue, we do still need to add a *Collider* to this Game Object con
 
 ![](./base-res/enemy-rigidbody-configuration.PNG)
 
+Note: The `Enemy -> Circle Collider 2D -> Is Trigger` property should be **checked** in the screenshot above, sorry!
+
 Great! That's all the set up we need to start scripting!
 
 ### EnemyController Script
@@ -228,6 +230,8 @@ For this game, we use any projectile's Y-Axis (The *green* one, colloqually the 
     You can then select the *Move Tool* in the *Scene* window to look at the direction of the *Green* arrow to see the orientation of the object.
 
     You can rotate the Game Object to observe this Up-arrow change direction.
+
+    ![](./base-res/chpt3-demonstrate-local-up-direction.gif)
 
 This is a lot simpler to do than it probably sounds, and just involves changing one line:
 To fix this, make the following adjustments to the code:
@@ -352,6 +356,8 @@ Fortunately, Unity has a shortcut to make a pre-configured *Input Actions* asset
 
 Select the *Player* Game Object and add a *Player Input* component. Below the `Actions` property, press the *Create Actions...* button and save the asset it offers to create.
 
+![](./base-res/chpt4-creating-player-inputs-asset.gif)
+
 If you double click on this asset in the Project window and open up the Input Actions view, you can see that it has created a mapping with the following Actions:
 
 * Move
@@ -361,11 +367,11 @@ If you double click on this asset in the Project window and open up the Input Ac
 * Fire
     * Triggered with a Left Mouse Button click or controller Right Trigger press.
 
+![](./base-res/chpt4-default-input-actions-config.png)
+
 The `Move` Action will produce a 2D Vector (X, Y) we can use from the Player's Input. For example, if the player is holding the W key, it will return (0, 1) for up. It would also return (-0.71, 0.71) if they were holding the W & A (The result is normalized to create a direction Vector).
 
-While we could go into more detail about building one from scratch, we want to keep things simple. Refer to the links below if you'd like to know more!
-
-((LINK TO EXTERNAL LEARNING FOR INPUT ACTIONS))
+While we could go into more detail about building one from scratch, we want to keep things simple. We will touch on creating new actions and bindings in future modules.
 
 ##### PlayerController.cs
 
@@ -375,7 +381,7 @@ Before we start, some explaination on the `Player Input` component is in order. 
 
 You can see which Actions will be broadcasted in the info box at the bottom of it's inspector shelf- it has one for each Action, following the pattern `On<ActionName>`
 
-((SCREENSHOT OF PLAYER INPUT INSPECTOR SHELF))
+![](./base-res/chpt4-player-input-messages.png)
 
 Let's capture that data and print it out to ensure it's working. Make the following edits to `PlayerController.cs`:
 ```cs title="PlayerController.cs" linenums="1" hl_lines="2 18-21"
@@ -559,11 +565,13 @@ public class PlayerController : MonoBehaviour
 
     * Linear Acceleration (or MoveTowards). This type adds a flat increment to the *Current Value* each step until it reaches the *Target Value*.
     * Linear Interpolation (Lerp). This smoothing method will move the *Current Value* some percentage of the distance between itself and the *Target Value* every step. This creates a motion which starts off very fast, but slows down as it reaches the target.
-    * Smooth Damp. This rather complex smoothing algorithm aims to simulate spring-motion. It can 'appear' to work a lot like Lerp, but has much better fiedlity and fluidity at the cost of being a little more annoying to set up.
-
-    ((LINKS TO SMOOTH DAMP, LERP, AND OTHER RESOURCES ABOUT SMOOTHING))
+    * Smooth Damp. This rather complex smoothing algorithm aims to simulate spring-motion. It can 'appear' to work a lot like Lerp, but has much better fidelity and fluidity at the cost of being a little more annoying to set up.
 
 You should now notice your Player is significantly smoother and more satisfying to control. You can play around with the `PlayerController: _movementSmoothingTime` in the inspector to change the feel- larger values will make the player feel heavier to turn and generally less agile, lower numbers will be snappier.
+
+![](./base-res/chpt4-smoothed-movement.gif)
+
+In case you forgot, our game is gamepad compatible. Plug in a controller to see even finer control!
 
 Don't worry if the math behind smoothing is a litle daunting right now. You will *absolutely* have more opportunities to practice it in your future projects- much like Vector mathematics, it's ubiquitous across almost all parts of making games feel good.
 
@@ -580,7 +588,9 @@ You can see where this is going, let's be lazy again! ++ctrl+d++ duplicate the G
 
 Change the *Base Sprite*'s sprite to one of the assets that resemble a laser. We're using `Art -> Sprites -> Lasers -> laserRed01`. Change the `Sorting Layer` to `Projectile`.
 
-To turn this *Laser Projectile* into a prefab, open the *Prefabs* folder in the *Project* window, then Drag and Drop the *Laser Projectile* Game Object **from the inspector into the empty space within the Project window**.
+To turn this *Laser Projectile* into a prefab, open the *Prefabs* folder in the *Project* window, then Drag and Drop the *Laser Projectile* Game Object **from the Inspector into the empty space within the Project window**.
+
+![](./base-res/chpt5-creating-laser-prefab.gif)
 
 ???+ warning "Editing Prefabs"
     Note that once you create a Prefab, you can open up the Prefab for editting by double clicking it in the Project window.
@@ -588,6 +598,7 @@ To turn this *Laser Projectile* into a prefab, open the *Prefabs* folder in the 
     If you make changes to an *INSTANCE* of a prefab in a scene, those changes will **not apply to the prefab (and thusly any copies made from it), it will only apply to that single instance**.
 
     Again, just be sure that you double click the prefab to open it up in isolation to edit the prefab itself to avoid confusion. If you do make edits to a prefab instance and want to apply it to the Prefab itself, you can use the *Overrides* dropdown in the Inspector window on the instance and apply the changes. 
+
 
 ... Did you remember to remove the `EnemyController` component from the new Laser object? Okay, good!
 
@@ -637,6 +648,8 @@ Before we write the script, whenever we are making something which "fires" somet
 
 Add an Empty Game Object to the *Player* (Called *Fire Point*), and position it so that it is located right at the tip of the ship's nose. **Make sure the green-axis of the *Fire Point* is still pointed upwards**, and we're good to go.
 
+![](./base-res/chpt5-fire-point-configuration.png)
+
 We'll do all of our weapon handling in a new script. Let's make one called `PlayerLaserGun.cs` and add it to the *Player* Game Object as a component:
 
 ```cs title="PlayerLaserGun.cs" linenums="1"
@@ -672,6 +685,8 @@ We'll do all of our weapon handling in a new script. Let's make one called `Play
     We provide both using `SerializeField` attributed variables at the top of the file, which allows us to drag-and-drop the Prefab asset from the Project window and the *Fire Point* Game Object we created in the last step.
 
     This will spawn in a clone of the Laser Projectile prefab and their own script will send them flying away!
+
+![](./base-res/chpt5-filling-in-gun-properties.gif)
 
 Once this is implemented and all fields are filled in, you can enter play mode and press the fire buttons to shoot lasers!
 
@@ -746,6 +761,8 @@ Change the `Trigger Behavior` to `Press and Release`, then click *Save Asset* at
 
 Run your game and hold down one of the Fire inputs- you now have an auto-firing laser gun!
 
+![](./base-res/chpt5-auto-fire-complete.gif)
+
 ##### Timed Destroy
 One quick thing. You may have noticed that your shots never disappear and wind up clogging up the Hierarchy (and thusly, unnecessarily consume Memory and CPU usage as they sail into the great beyond).
 
@@ -797,6 +814,8 @@ Create an Empty Game Object in the Hierarchy called *Spawner*. Position it somew
     In the Inspector window for a selected Game Object, you can click on the Dropdown box to the left of the Name field to assign a marker gizmos to it, making it visible to you.
 
     I recommend doing this for the *Spawner* object.
+
+    ![](./base-res/chpt6-game-object-markers.gif)
 
 If you haven't already, take the *Enemy* Game Object and drag it into your Prefabs folder to create a Prefab of it. Again, we need to create a Prefab of an object if we would like to Instantiate (spawn) it.
 
@@ -899,6 +918,8 @@ public class Spawner : MonoBehaviour
 
 Jump in game, you'll notice your spawner has some dispersion now!
 
+![](./base-res/chpt6-dispersion.gif)
+
 ##### Place Spawners
 
 The last thing to do is to turn your *Spawner* Object into a Prefab and place a couple copies of them around the outside of the play area, rotating them to face inwards toward the center. The dispersion will give them wider coverage so there is a possiblity to be hit anywhere on the screen.
@@ -909,8 +930,10 @@ For my example, I placed three Spawners in a loosely triangular fashion around t
 
 Once that's done, you've finished this base template!
 
+![](./base-res/chpt6-finished-base-project.gif)
+
 ## Conclusion
-Congratulations, you've now got a pretty neat game, and you've learned a fair amount of foundational elements to game development.
+Congratulations, you've now got a pretty neat game, and you've learned a fair amount of foundational elements to game development! \o/
 
 ### What now?
 
@@ -925,6 +948,7 @@ Keep in mind as well that you can completely charge around the art assets if you
 Here are some ideas of things you could do if you need inspiration:
 
 * Add sound effects and particle effects for player / enemy death, laser shooting, flying, etc. This will really make your game pop!
+* Make the enemy's *Visuals* Game Object rotate to make the asteroids appear to spin through the air.
 * Create a game over screen when the player dies which reports time survived, allows them to restart and quit the game.
 * Create a main menu before the game starts.
 * Fix the bug which allows the player to fly off the screen boundaries.
@@ -937,11 +961,3 @@ Here are some ideas of things you could do if you need inspiration:
 * Add some more detail to the background- far off planets, asteroids flying around, etc.
 
 In the future, this tutorial will be expanded with additional modules to show you how to do some of these things. Look forward to that!
-
-
-
-# Appendix
-
-#### Why Do We Organize Our Player and Enemy Game Objects so Elaborately?
-    
-#### Why Do We Use Triggers Colliders Instead of Regular Colliders?
