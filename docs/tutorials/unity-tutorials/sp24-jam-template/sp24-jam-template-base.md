@@ -43,7 +43,7 @@ Then, press the '*Regenerate project files*' button.
 Lastly, whenever you download a new Unity project, Unity typically doesn't know what scene it should open, so you'll wind up on an empty, unsaved one. Before continuing, open the `Scenes` folder in the *Project* window and open the *SampleScene*.
 
 ## Chapter 2: Scene and Art
-In this chapter, we will get warmed up with the Unity Editor by building the Game Objects (GOs) for what will eventually be our Player and Enemies. We'll also make quick use of our art assets so we have something pretty to look at.
+In this chapter, we will get warmed up with the Unity Editor by building the Game Objects for what will eventually be our Player and Enemies. We'll also make quick use of our art assets so we have something pretty to look at.
 
 ### Adding the Background
 The default grey background is pretty ugly, so let's pull in our background art to quickly remedy that.
@@ -122,7 +122,7 @@ We've got a great opportunity to be lazy here. Let's duplicate the *Player* Game
 Don't forget to change sorting layer for the enemy's base sprite to `Enemy` instead of `Player`. Also, move the *Enemy* a bit below the *Player* (but still on screen) so that they aren't overlapping.
 
 ## Chapter 3: Enemy Scripts
-In order to get our enemies to do exactly what we want them to, we'll need to write custom scripts to dictate how what they should do when the game runs through code. Since the design goals for the Enemy are much simpler than for the Player, we'll start on the Enemy.
+In order to get our enemies to do exactly what we want them to, we'll need to write custom scripts to dictate what they should do when the game runs through code. Since the design goals for the Enemy are much simpler than for the Player, we'll start on the Enemy.
 
 ### Component Set Up
 Before we write our own script, we'll need to do a little more configuration on the *Enemy* Game Object before hand.
@@ -175,7 +175,7 @@ public class EnemyController : MonoBehaviour
 ```
 
 ???+ abstract
-    Every script which derives from the `MonoBehavior` class will have a series of Events called on it at various times by Unity's script runner or other activites in your game. `void Start()` is one such Event- and the code within it starts once the Game Object the script is attached to enters the scene for the first time. This makes it a good place for initialization.
+    Every script which derives from the `MonoBehavior` class will have a series of Events called on it at various times by Unity's script runner or other activites in your game. `void Start()` is one such Event- and the code within it starts once the Game Object the script is attached to enters the scene for the first time (which will be when the game starts for any object already in the scene). This makes it a good place for initialization.
 
     To get our *Enemy* to move, we need to set the velocity on its *Rigidbody2D* component we attached through code- it'll fly in whatever direction we specify.
 
@@ -212,9 +212,11 @@ public class EnemyController : MonoBehaviour
 ```
 
 ???+ abstract
-    Adding the new class member `_movementSpeed` and putting the `SerializeField` tag before it allows this value to be set in the *Inspector* window- so we can adjust it in the editor (even while the game is playing)!
+    Adding the new class member `_movementSpeed` and putting the `SerializeField` attribute before it allows this value to be set in the *Inspector* window- so we can adjust it in the editor (even while the game is playing)!
 
     We then use that `_movementSpeed` in place of the hard-coded `5f` speed.
+
+    Note that the `Tooltip('...')` attribute helps tell us what the proceding class member is used for- both here and  when we hover over that property in the Inspector.
 
 If you go back to the editor and look at the *Inspector* for *Enemy*, you will see a new `Movement Speed` field which you can type custom values into. As mentioned in the Abstract, you can even adjust this value while in play mode!
 
@@ -280,7 +282,7 @@ We will modify our `EnemyController` script to do the following:
 3. If so, destroy both of us.
 
 Let's implement that with the following code on `EnemyController`:
-```cs title="EnemyController.cs" linenums="1" hl_lines="20-23"
+```cs title="EnemyController.cs" linenums="1" hl_lines="20-24"
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -313,13 +315,14 @@ public class EnemyController : MonoBehaviour
 
     Quite simply, we will use the `Destroy(GameObject)` method to destroy the other thing we collided with, then Destroy ourselves.
 
+You will need to add a `Rigidbody2D` and `CircleCollider` to the *Player* in order to register collisions against it. Configure both components the exact same way as you did on the *Enemy*.
+
 Note, however, that the code above will cause the enemy to destroy *any* thing is collides with, not just the Player.
 
 There are a couple ways to determine if the thing we collided with is a particular Game Object we're looking for, but the most common way is to check to see if it has a particular component unique to Player.
 
 In Chapter 4, we'll need to add a `PlayerController` to our Player, so let's go ahead and do that now so that we can search for that component while doing collsion resoluton.
 
-You will also need to add a `Rigidbody2D` and `CircleCollider` to the *Player* in order to register collisions against it. Configure both components the exact same way as you did on the *Enemy*.
 
 In the Project Window, make a new `PlayerController` C# Script, add it as a component to the Player (we do not need to edit the script yet), then make the following changes to `EnemyController`:
 ```cs title="EnemyController.cs (fragment)" linenums="20" hl_lines="20-23"
@@ -358,10 +361,10 @@ Select the *Player* Game Object and add a *Player Input* component. Below the `A
 
 ![](./base-res/chpt4-creating-player-inputs-asset.gif)
 
-If you double click on this asset in the Project window and open up the Input Actions view, you can see that it has created a mapping with the following Actions:
+The Input Actions editor will open up (you can double-click the newly made asset in the project window if you lost it). You can see that it has created a mapping with the following Actions:
 
 * Move
-    * Creates a 2D Input Vector using the WASD keys OR the controller left joystick.
+    * Generates a 2D Input Vector using the WASD (A-D for X, W-S for Y) keys OR the controller left joystick.
 * Look
     * Creates a 2D Input Vector using the Mouse Delta OR controller right joystick (Irrelevant to us).
 * Fire
@@ -371,15 +374,15 @@ If you double click on this asset in the Project window and open up the Input Ac
 
 The `Move` Action will produce a 2D Vector (X, Y) we can use from the Player's Input. For example, if the player is holding the W key, it will return (0, 1) for up. It would also return (-0.71, 0.71) if they were holding the W & A (The result is normalized to create a direction Vector).
 
-While we could go into more detail about building one from scratch, we want to keep things simple. We will touch on creating new actions and bindings in future modules.
+While we could go into more detail about building actions and bindings from scratch, we want to keep things simple. We will touch on creating new actions and bindings in future modules.
 
 ##### PlayerController.cs
 
 In Chapter 3, we attached an empty `PlayerController.cs` script (as well as a Rigidbody2D and a Circle Collider) to the Player. We will now fill out that script here.
 
-Before we start, some explaination on the `Player Input` component is in order. In short, it listens for any Action to be triggered from the *Input Actions* it is watching, and then broadcasts a message to every MonoBehavior script on the **same Game Object as itself**.
+Before we start, some explaination on the `Player Input` component is in order. In short, it listens for any Action to be triggered from the *Input Actions* it is watching, and then sends a message to every MonoBehavior script on the **same Game Object as itself**. Any component that receives this message can successfully respond to it if it has a function that matches the method's signature.
 
-You can see which Actions will be broadcasted in the info box at the bottom of it's inspector shelf- it has one for each Action, following the pattern `On<ActionName>`
+You can see which Actions will be messaged out in the info box at the bottom of it's inspector shelf- it has one for each Action, following the pattern `On<ActionName>`. Therefore, if we wanted to catch the `OnMove` action, our script will need a `void OnMove(InputValue value)`.
 
 ![](./base-res/chpt4-player-input-messages.png)
 
@@ -487,7 +490,7 @@ void FixedUpdate()
 ```
 
 ???+ abstract
-    The `Quaternion.LookRotation()` let's us get a rotation from a direction, so we change the Player's direction to the input direction.
+    The `Quaternion.LookRotation()` method gets a rotation from a direction, so we change the Player's direction to the input direction.
 
     Note that the first parameter to `LookRotation` is the axis that the rotation occurs on. For 2D games, this will always be `Vector3.forward`, which aligns with the *'Topdown'* Z-axis, or the direction our camera is viewing the game plane on.
 
@@ -506,7 +509,7 @@ public class PlayerController : MonoBehaviour
     private float _movementSpeed = 5f;
 
     [SerializeField, Tooltip("Amount of smoothing time applied to velocity changes")]
-    private float _movementSmoothingTime = 0.1f;
+    private float _movementSmoothingTime = 0.35f;
 
     [SerializeField, Tooltip("The player's angular rotation speed in degrees per second.")]
     private float _rotationSpeed = 500f;
@@ -527,10 +530,10 @@ public class PlayerController : MonoBehaviour
         // Gradually changes a vector towards a desired target over time.
         // Used to smooth player movement to avoid abrupt, jittery movement.
         _currentMovement = Vector2.SmoothDamp(
-            _currentMovement,
-            _movementInput,
-            ref _movementSmoothingVelocity,
-            _movementSmoothingTime
+            _currentMovement,                   // Our current velocity
+            _movementInput,                     // The player's input, we want to *reach* this
+            ref _movementSmoothingVelocity,     // our current *acceleration*
+            _movementSmoothingTime              // smoothing duration, lower is faster.
         );
         _rigidbody.velocity = _currentMovement * _movementSpeed; // Set the linear velocity of the player in units per second.
 
@@ -758,6 +761,8 @@ One final thing to change- by default, *Button*-type actions only trigger when t
 Open up the *Input Actions* asset, select `Fire` and press the `+` dropdown along the header called *Interactions* on the right. Select *Press*.
 
 Change the `Trigger Behavior` to `Press and Release`, then click *Save Asset* at the top. This will make this Action trigger on both button down and up inputs.
+
+![](./base-res/chpt5-press-and-release-fire-config.gif)
 
 Run your game and hold down one of the Fire inputs- you now have an auto-firing laser gun!
 

@@ -1,21 +1,18 @@
 # Spring 2024 Game Jam Template
 *By Marceline Gallegos and Jake Rogers*
 
-*Created: February 7th, 2024*
+*Created: February 21st, 2024*
 
 # Summary
 
-In this game jam template, we'll teach you how to build up a simple top-down shooter game. The resultant project will be a great base you can use to experiment with by adding your own features.
+![](./base-res/chpt6-finished-base-project.gif)
 
-We will also eventually provide additional learning modules to help you expand the base as well.
+In this game jam template, we'll teach you how to build up a 2D top-down game where the player has to dodge or shoot asteroids which will destroy them on contact, with asteroids constantly spawning in from the edges of the screen.
 
-In the tutorial, you'll do the following:
+Being a game template, you are highly encouraged to experiment with this foundation and add your own features! Many are suggested at the bottom of the Base Template Tutorial. Speaking of which, get started at the link below:
 
-((GIF OF GAME))
+* [Base Template Tutorial (Start Here!)](./sp24-jam-template-base.md)
 
-### Base Tutorial (Start Here!)
+## Modules
 
-((LINK TO SERVER))
-
-### Additional Modules
-Coming soon!
+In the future, we will release additional *modules* which are tutorials which will expand upon the base template. You'll find them here when they are available!
