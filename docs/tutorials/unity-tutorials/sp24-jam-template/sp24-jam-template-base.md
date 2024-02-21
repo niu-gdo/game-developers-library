@@ -942,9 +942,9 @@ Congratulations, you've now got a pretty neat game, and you've learned a fair am
 
 ### What now?
 
-This game, as is mentioned in the article's title, works as a great *template*- you can learn a lot by expanding it with your own features and experimenting. There is a lot you can do to make your version of the game unique from everyone else's, you may have already had some ideas, so try and implement them!
+This game, as is mentioned in the article's title, this tutorial leaves you with a nice *template*- you can learn a lot by expanding it with your own features and experimenting. There is a lot you can do to make your version of the game unique from everyone else's. You may have already had some ideas, so try and implement them!
 
-Just remember that much of your time spent doing game development will be spent researching, experimenting, and debugging- it's perfectly fine if you're not always making object and visible progress towards finishing your games, **it's all part of the process at all skill levels**.
+Just do your best to start small to avoid overwhelming yourself or getting frustrated, and **remember that the completed version of this template is available to download off the GitHub page**.
 
 Keep in mind as well that you can completely charge around the art assets if you're not digging the space theme- the top down controller could be used in something like a hunter dodging leopards in the jungle, ships at sea, or a dungeon crawl. Be creative!
 
@@ -954,15 +954,13 @@ Here are some ideas of things you could do if you need inspiration:
 
 * Add sound effects and particle effects for player / enemy death, laser shooting, flying, etc. This will really make your game pop!
 * Make the enemy's *Visuals* Game Object rotate to make the asteroids appear to spin through the air.
-* Create a game over screen when the player dies which reports time survived, allows them to restart and quit the game.
+* Create a game over screen when the player dies which reports time survived, allows them to restart, and quit the game.
 * Create a main menu before the game starts.
-* Fix the bug which allows the player to fly off the screen boundaries.
+* Stop the player from flying outside of the screen boundaries.
 * Make the enemies spawn faster as the player survives longer.
 * Create some new enemy types:
     * A slower but much larger enemy.
     * An enemy which breaks into two smaller ones when destroyed.
     * An enemy which takes multiple shots to destroy.
-* The player has a health bar that constantly drains- it can only be restored by picking up health dropped by destroyed enemies.
+* Make some enemies drop a power up that increases the player's rate of fire.
 * Add some more detail to the background- far off planets, asteroids flying around, etc.
-
-In the future, this tutorial will be expanded with additional modules to show you how to do some of these things. Look forward to that!
