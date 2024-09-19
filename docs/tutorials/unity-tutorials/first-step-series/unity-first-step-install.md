@@ -34,11 +34,11 @@ Once your account is made, you may notice that Unity Hub is telling you that you
 In Unity Hub, open the drop down on the top left (next to the profile picture) and select 'manage licenses'. Select 'Add License' and get a personal one.
 
 ???+ info "Unity Licenses"
-    To paraphrase, Unity's Personal License permits you to create applications with Unity as long as **your software(s) developed with Unity** gross less than $100,000 in any fiscal year (The time between now and the last twelve months).
+    To paraphrase, Unity's Personal License permits you to create applications with Unity as long as **your software(s) developed with Unity** gross less than $200,000 in any fiscal year (The time between now and the last twelve months).
 
     The above only qualifies if you are an *individual* using Unity. If you are part of a legal entity or an established, budgeted organization / institution, the rules are different. 
 
-    Should you have the 'problem' of accidentally making over $100k in a fiscal year with your software, you (and your team) will need to upgrade to a Unity Plus or Pro license depending on your financial threshold.
+    Should you have the 'problem' of accidentally making over $200k in a fiscal year with your software, you (and your team) will need to upgrade to a Unity Plus or Pro license depending on your financial threshold.
 
     [Unity's Terms of Service](https://unity.com/legal/editor-terms-of-service/software) **should be well-understood before creating a commercial product with the software**. If in doubt, don't trust what I say, trust their terms of service!
 

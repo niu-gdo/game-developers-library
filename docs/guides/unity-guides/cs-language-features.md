@@ -187,7 +187,7 @@ private void foo()
 }
 ```
 
-The above could also be written like so using [expression bodies](./#expression-bodies):
+The above could also be written like so using [expression bodies](#expression-bodies):
 ```cs linenums="1"
 public class CharacterHealth
 {
@@ -302,7 +302,7 @@ private void bar()
 }
 ```
 
-This is a nice way to implement functions which like to return more than one value (Assuming you don't want to use a [tuple](./#tuples)).
+This is a nice way to implement functions which like to return more than one value (Assuming you don't want to use a [tuple](#tuples)).
 
 [Learn More](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/out-parameter-modifier)
 

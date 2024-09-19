@@ -1,7 +1,9 @@
-# Spring 2024 Game Jam Template
+# Fall 2024 Game Jam Template
 *By Marceline Gallegos and Jake Rogers*
 
 *Created: February 21st, 2024*
+
+*Updated: September 18th, 2024*
 
 # Summary
 
