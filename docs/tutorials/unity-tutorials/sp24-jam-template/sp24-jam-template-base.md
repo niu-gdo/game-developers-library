@@ -1,14 +1,17 @@
-# Spring 2024 Game Jam Template - Base Tutorial
+# Fall 2024 Game Jam Template - Base Tutorial
 *By Marceline Gallegos and Jake Rogers*
 
 *Created: February 7th, 2024*
+
+*Updated: September 18th, 2024*
+
 
 ## Summary
 
 Since the GDL already has articles on the basics of Unity use, we will not repeat ourselves here. Please view the articles below if you are stuck with the following topics:
 
-* Installing Unity (Read: [Tutorial Here!](/tutorials/unity-tutorials/first-step-series/unity-first-step-install))
-* Basic Editor Controls (Read: [Tutorial Here!](/tutorials/unity-tutorials/unity-editor-introduction))
+* Installing Unity (Read: [Tutorial Here!](../first-step-series/unity-first-step-install.md))
+* Basic Editor Controls (Read: [Tutorial Here!](../unity-editor-introduction.md))
 
 Please also note, most images and gifs on this page can be viewed in full size by Right-Clicking them and selecting 'Open Image in New Tab'. Please do so if they are hard to read.
 

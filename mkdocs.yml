@@ -64,7 +64,7 @@ nav:
     - 'Tutorials Index': 'tutorials/tutorials-index.md'
     - Unity Tutorials:
       - 'Introduction to the Editor': 'tutorials/unity-tutorials/unity-editor-introduction.md'
-      - Spring 2024 Game Jam Template:
+      - Fall 2024 Game Jam Template:
         - 'Game Jame Template Index': 'tutorials/unity-tutorials/sp24-jam-template/sp24-jam-template-index.md'
         - 'Base Game Tutorial': 'tutorials/unity-tutorials/sp24-jam-template/sp24-jam-template-base.md'
       - First Steps:

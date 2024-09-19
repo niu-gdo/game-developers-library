@@ -15,7 +15,7 @@ Our *First Steps* guides on any particular tool are primarily for helping new de
 ## Unity
 * [Introduction to the Editor](./unity-tutorials/unity-editor-introduction.md)
 * [First Steps: Learn How to Use Unity!](./unity-tutorials/first-step-series/unity-first-step-index.md)
-* [Spring 2024 Game Jam Template](./unity-tutorials/sp24-jam-template/sp24-jam-template-index.md)
+* [Fall 2024 Game Jam Template](./unity-tutorials/sp24-jam-template/sp24-jam-template-index.md)
 
 ## Game Engines
 * [Introduct to Game Engines](./game-engines/introduction-to-game-engines.md)
